@@ -3,6 +3,7 @@ package com.check.app;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.addList:
-                //code here for add list activity.
+                startActivity(new Intent(getApplicationContext(), Create_List_Activity.class));
                 return true;
             case R.id.logOut:
                 //code here for logging out when  firebase support is added
