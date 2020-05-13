@@ -5,11 +5,12 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Create_List_Dialog.CreateListListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +30,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.addList:
-                startActivity(new Intent(getApplicationContext(), Create_List_Activity.class));
+               // startActivity(new Intent(getApplicationContext(), Create_List_Activity.class));
+                Create_List_Dialog list_dialog = new Create_List_Dialog();
+                list_dialog.show(getSupportFragmentManager(), "Create List");
                 return true;
             case R.id.logOut:
                 //code here for logging out when  firebase support is added
@@ -37,5 +40,12 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void attatchListSettings(String listName) {
+        String name;
+        name = listName;
+        Log.d("Passthrough Checker", name);
     }
 }
