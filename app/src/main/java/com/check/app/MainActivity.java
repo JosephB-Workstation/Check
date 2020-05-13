@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
     }
 
     @Override
-    public void attatchListSettings(String listName) {
+    public void attatchListSettings(String listName) { // handles pulling data from the dialog box for making lists. Will eventually make lists.
         String name;
         name = listName;
         Log.d("Passthrough Checker", name);
