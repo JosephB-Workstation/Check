@@ -10,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.check.app.List_Stuff.List_Activity;
+
 public class MainActivity extends AppCompatActivity implements Create_List_Dialog.CreateListListener{
 
     @Override
@@ -17,7 +19,7 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = findViewById(R.id.mainToolBar);
+        Toolbar toolbar = findViewById(R.id.mainToolBar); //generates toolbar for mainmenu
         setSupportActionBar(toolbar);
     }
     @Override
@@ -30,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.addList:
-               // startActivity(new Intent(getApplicationContext(), Create_List_Activity.class));
+              // startActivity(new Intent(getApplicationContext(), Create_List_Activity.class));
                 Create_List_Dialog list_dialog = new Create_List_Dialog();
                 list_dialog.show(getSupportFragmentManager(), "Create List");
                 return true;
@@ -43,9 +45,10 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
     }
 
     @Override
-    public void attatchListSettings(String listName) { // handles pulling data from the dialog box for making lists. Will eventually make lists.
-        String name;
-        name = listName;
-        Log.d("Passthrough Checker", name);
+    public void attachListSettings(String _listName) { // handles pulling data from the dialog box for making lists. Passes list metadata via intent.
+        Intent listIntent = new Intent(MainActivity.this, List_Activity.class);
+        listIntent.putExtra("listName", _listName);
+        startActivity(listIntent);
+
     }
 }

@@ -5,11 +5,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/mainToolBar"
+            android:id="@+id/listToolBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:title="If you are seeing this something is wrong"> </androidx.appcompat.widget.Toolbar>
+            app:title="List name not carried error!"> </androidx.appcompat.widget.Toolbar>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/taskList"
+            android:layout_below="@+id/listToolBar">
+        </androidx.recyclerview.widget.RecyclerView>
 </RelativeLayout>

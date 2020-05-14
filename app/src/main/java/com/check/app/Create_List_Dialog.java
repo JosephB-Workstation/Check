@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,10 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+
+import com.check.app.List_Stuff.List_Activity;
+
+import java.util.Random;
 
 public class Create_List_Dialog extends DialogFragment {
 
@@ -31,10 +36,9 @@ public class Create_List_Dialog extends DialogFragment {
                 .setPositiveButton("Create list", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) { //any settings should be configured here while you have the chance, and sent to attachListSettings within the interface.
-                        if(!listNameEntry.getText().toString().trim().isEmpty()){
+                        if(!listNameEntry.getText().toString().trim().isEmpty()){ //if statement handles empty names.
                             String listName = listNameEntry.getText().toString();
-                            listListener.attatchListSettings(listName);
-
+                            listListener.attachListSettings(listName);
                         }
                         else Log.d("False", "It worked");
                     }
@@ -55,7 +59,7 @@ public class Create_List_Dialog extends DialogFragment {
     }
 
     public interface CreateListListener{
-        void attatchListSettings(String listName);
+        void attachListSettings(String _listName);
     }
 
 }

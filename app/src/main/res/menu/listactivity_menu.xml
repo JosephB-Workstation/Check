@@ -2,16 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/addList"
+        android:id="@+id/addTask"
         android:icon="@drawable/ic_add_light_24dp"
-        android:title="Add new list"
+        android:title="Add new task"
         app:showAsAction="ifRoom">
     </item>
 
     <item
-        android:id="@+id/logOut"
-        android:title="Log Out"
+        android:id="@+id/listSettings"
+        android:title="List Settings"
         app:showAsAction="never">
     </item>
-
 </menu>
