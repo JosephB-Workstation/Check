@@ -56,6 +56,9 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
             case R.id.listSettings:
                 //code here for dialog to edit a task
                 return true;
+            case R.id.listClear:
+                taskList.clear();
+                lTaskAdapter.notifyDataSetChanged();
             default:
                 return super.onOptionsItemSelected(item);
         }

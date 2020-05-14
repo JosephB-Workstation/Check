@@ -13,4 +13,12 @@
         android:title="List Settings"
         app:showAsAction="never">
     </item>
+
+    <item
+        android:id="@+id/listClear"
+        android:title="Clear List"
+        app:showAsAction="never">
+
+    </item>
+    
 </menu>
