@@ -9,10 +9,10 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter List Name"
+        android:hint="Enter Task Name"
         android:inputType="text"
-        android:autofillHints="List name"
-        android:id="@+id/listName">
+        android:autofillHints="Task name"
+        android:id="@+id/taskName">
 
     </EditText>
 

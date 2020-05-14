@@ -1,4 +1,4 @@
-package com.check.app;
+package com.check.app.Task_Stuff;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -14,46 +14,49 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.check.app.R;
 
-public class Create_List_Dialog extends DialogFragment {
-    private EditText listNameEntry;
-    private CreateListListener listListener;
+public class Create_Task_Dialog extends DialogFragment {
+    private EditText taskNameEntry;
+    private CreateTaskListener taskListener;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_create_list, null);
+        View view = inflater.inflate(R.layout.dialog_create_task, null);
         dialogBuilder.setView(view)
                 .setTitle("Create a new list")
-                .setPositiveButton("Create list", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Create Task", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) { //any settings should be configured here while you have the chance, and sent to attachListSettings within the interface.
-                        if(!listNameEntry.getText().toString().trim().isEmpty()){ //if statement handles empty names.
-                            String listName = listNameEntry.getText().toString();
-                            listListener.attachListSettings(listName);
-                        }
-                        else Log.d("False", "It worked! List not created!");
+                    public void onClick(DialogInterface dialog, int which) {
+                            if (!taskNameEntry.getText().toString().trim().isEmpty()) {
+                                String taskName = taskNameEntry.getText().toString();
+                                taskListener.attachTaskSettings(taskName);
+                            } else
+                                Log.d("Success Check", "Task should not have been added! was empty!");
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
                     }
                 });
-        listNameEntry = view.findViewById(R.id.listName);
+
+        taskNameEntry = view.findViewById(R.id.taskName);
         return dialogBuilder.create();
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        listListener = (CreateListListener)context;
+        taskListener = (CreateTaskListener)context;
     }
 
-    public interface CreateListListener{
-        void attachListSettings(String _listName);
+    public interface CreateTaskListener{
+        void attachTaskSettings(String _taskName);
     }
-
 }
+
