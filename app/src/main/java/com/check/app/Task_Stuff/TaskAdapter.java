@@ -1,26 +1,36 @@
 package com.check.app.Task_Stuff;
 
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.check.app.List_Stuff.List_Activity;
 import com.check.app.R;
 
 import java.util.ArrayList;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHolder> {
     private ArrayList<TaskObject> taskList;
-    public TaskAdapter(ArrayList<TaskObject> taskList){
+    private Context context;
+    private FragmentManager fm;
+    public TaskAdapter( Context _context, ArrayList<TaskObject> taskList, FragmentManager _fm){
         this.taskList = taskList; //updates tasks.
+        this.context = _context;
+        this.fm = _fm;
     }
-
     @NonNull
     @Override
     public TaskListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -29,6 +39,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHo
         layoutView.setLayoutParams(lp);
 
         TaskListViewHolder taskseer = new TaskListViewHolder(layoutView); // assigns parameters above to the view holder
+
         return taskseer;
     }
 
@@ -43,6 +54,23 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHo
                 notifyDataSetChanged();
             }
         });
+        holder.vhEditButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                String taskName = taskList.get(position).getTaskName();
+                int arraypos = position;
+                openDialogFragment(taskName, arraypos);
+            }
+        });
+    }
+
+    private void openDialogFragment(String _taskName, int _arraypos){
+        Bundle deliverTask = new Bundle();
+        deliverTask.putString("taskName", _taskName);
+        deliverTask.putInt("position", _arraypos);
+        Edit_Task_Dialog editTask = new Edit_Task_Dialog();
+        editTask.setArguments(deliverTask);
+        editTask.show(fm, "editTask");
     }
 
     @Override
@@ -57,14 +85,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHo
     public class TaskListViewHolder extends RecyclerView.ViewHolder{
         TextView vhTask;
         Button vhCheckbox;
+        Button vhEditButton;
         ImageView vhCheckBoxState;
-        LinearLayout layout;
+        LinearLayout taskItem;
         TaskListViewHolder(View view){
             super(view);
             vhTask = view.findViewById(R.id.taskName);
             vhCheckbox = view.findViewById(R.id.checkButton);
             vhCheckBoxState = view.findViewById(R.id.checkImage);
-            layout = view.findViewById(R.id.listLayout);
+            taskItem = view.findViewById(R.id.layout);
+            vhEditButton = view.findViewById(R.id.editTask);
         }
     }
 }

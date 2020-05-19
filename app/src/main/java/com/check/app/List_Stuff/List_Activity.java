@@ -5,6 +5,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,17 +16,20 @@ import android.view.MenuItem;
 import com.check.app.Create_List_Dialog;
 import com.check.app.R;
 import com.check.app.Task_Stuff.Create_Task_Dialog;
+import com.check.app.Task_Stuff.Edit_Task_Dialog;
 import com.check.app.Task_Stuff.TaskAdapter;
 import com.check.app.Task_Stuff.TaskObject;
 
 import java.util.ArrayList;
 
-public class List_Activity extends AppCompatActivity implements Create_Task_Dialog.CreateTaskListener {
+public class List_Activity extends AppCompatActivity implements Create_Task_Dialog.CreateTaskListener, Edit_Task_Dialog.editTaskListener {
     private RecyclerView lTasks;
     private RecyclerView.Adapter lTaskAdapter;
     private RecyclerView.LayoutManager lTaskLayoutManager;
     private String listName;
     private ArrayList<TaskObject> taskList;
+    private static Context context;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +54,12 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.addTask:
+                //edit task by using an arg bundle, and then doing taskdialog.setArguments(args)
                 Create_Task_Dialog taskdialog = new Create_Task_Dialog();
+                //The commented out lines allow for entry of data into the edit text, along with the commented out data in Create_Task_Dialog. Good for editing tasks!
+                //Bundle test = new Bundle();
+                //test.putString("1", "testing!");
+                //taskdialog.setArguments(test);
                 taskdialog.show(getSupportFragmentManager(), "Create Task");
                 return true;
             case R.id.listSettings:
@@ -63,6 +72,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
                 return super.onOptionsItemSelected(item);
         }
     }
+
 
     @Override
     public void attachTaskSettings(String _taskName) {
@@ -79,9 +89,16 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         lTasks.setHasFixedSize(false);
         lTaskLayoutManager = new LinearLayoutManager(getApplicationContext(), RecyclerView.VERTICAL, false);
         lTasks.setLayoutManager(lTaskLayoutManager);
-        lTaskAdapter = new TaskAdapter(taskList);
+        lTaskAdapter = new TaskAdapter(context, taskList, this.getSupportFragmentManager());
         lTasks.setAdapter(lTaskAdapter);
 
+    }
+
+    @Override
+    public void attachUpdatedTaskSettings(String _taskName, int _position) {
+        Log.d("Task updated", _taskName);
+        taskList.get(_position).setTaskName(_taskName);
+        lTaskAdapter.notifyDataSetChanged();
     }
 }
 

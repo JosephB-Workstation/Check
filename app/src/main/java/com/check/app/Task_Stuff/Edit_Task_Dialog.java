@@ -17,9 +17,12 @@ import androidx.fragment.app.DialogFragment;
 
 import com.check.app.R;
 
-public class Create_Task_Dialog extends DialogFragment {
+import java.util.ArrayList;
+
+public class Edit_Task_Dialog extends DialogFragment {
     private EditText taskNameEntry;
-    private CreateTaskListener taskListener;
+    private editTaskListener taskListener;
+    private int position;
 
     @NonNull
     @Override
@@ -28,16 +31,19 @@ public class Create_Task_Dialog extends DialogFragment {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_create_task, null);
         taskNameEntry = view.findViewById(R.id.taskName);
+        taskNameEntry.setText(getArguments().getString("taskName"), TextView.BufferType.EDITABLE);
+        position = getArguments().getInt("position");
+        String title = ("Editing " + getArguments().get("taskName") + ":");
         dialogBuilder.setView(view)
-                .setTitle("Create a new task")
-                .setPositiveButton("Create Task", new DialogInterface.OnClickListener() {
+                .setTitle(title)
+                .setPositiveButton("Save Task", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                             if (!taskNameEntry.getText().toString().trim().isEmpty()) {
                                 String taskName = taskNameEntry.getText().toString();
-                                taskListener.attachTaskSettings(taskName);
+                                taskListener.attachUpdatedTaskSettings(taskName, position);
                             } else
-                                Log.d("Success Check", "Task should not have been added! was empty!");
+                                Log.d("Success Check", "Task should not have been changed! name was empty!");
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -53,11 +59,12 @@ public class Create_Task_Dialog extends DialogFragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        taskListener = (CreateTaskListener)context;
+        taskListener = (editTaskListener)context;
     }
 
-    public interface CreateTaskListener{
-        void attachTaskSettings(String _taskName);
+    public interface editTaskListener{
+        void attachUpdatedTaskSettings(String _taskName, int _position);
     }
+
 }
 

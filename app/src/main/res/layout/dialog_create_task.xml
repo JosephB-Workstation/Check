@@ -4,13 +4,23 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:theme="@style/Theme.AppCompat.DayNight.Dialog.Alert">
+    android:theme="@style/Theme.AppCompat.DayNight.Dialog.Alert"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Task Name:"
+        android:textSize="20sp">
+
+    </TextView>
 
     <EditText
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:hint="Enter Task Name"
         android:inputType="text"
+        android:text=""
         android:autofillHints="Task name"
         android:id="@+id/taskName">
 

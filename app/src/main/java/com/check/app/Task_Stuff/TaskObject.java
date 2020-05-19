@@ -31,4 +31,7 @@ public class TaskObject {
             checkboxStateSource = R.drawable.notchecked;
         }
     }
+    public void setTaskName(String newName){
+        taskName = newName;
+    }
 }
