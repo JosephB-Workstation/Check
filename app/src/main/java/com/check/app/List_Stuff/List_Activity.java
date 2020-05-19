@@ -75,9 +75,9 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
 
 
     @Override
-    public void attachTaskSettings(String _taskName) {
+    public void attachTaskSettings(String _taskName, String _taskDescription) {
         Log.d("Task created", _taskName);
-        TaskObject newTask = new TaskObject(_taskName);
+        TaskObject newTask = new TaskObject(_taskName, _taskDescription);
         taskList.add(newTask);
         lTaskAdapter.notifyDataSetChanged();
     }
@@ -95,9 +95,10 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
     }
 
     @Override
-    public void attachUpdatedTaskSettings(String _taskName, int _position) {
+    public void attachUpdatedTaskSettings(String _taskName, String _taskDescription, int _position) {
         Log.d("Task updated", _taskName);
         taskList.get(_position).setTaskName(_taskName);
+        taskList.get(_position).setTaskDescription(_taskDescription);
         lTaskAdapter.notifyDataSetChanged();
     }
 }

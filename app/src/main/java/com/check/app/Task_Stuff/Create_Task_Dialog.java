@@ -18,7 +18,7 @@ import androidx.fragment.app.DialogFragment;
 import com.check.app.R;
 
 public class Create_Task_Dialog extends DialogFragment {
-    private EditText taskNameEntry;
+    private EditText taskNameEntry, taskDescriptionEntry;
     private CreateTaskListener taskListener;
 
     @NonNull
@@ -28,6 +28,7 @@ public class Create_Task_Dialog extends DialogFragment {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_create_task, null);
         taskNameEntry = view.findViewById(R.id.taskName);
+        taskDescriptionEntry = view.findViewById(R.id.taskDescription);
         dialogBuilder.setView(view)
                 .setTitle("Create a new task")
                 .setPositiveButton("Create Task", new DialogInterface.OnClickListener() {
@@ -35,7 +36,9 @@ public class Create_Task_Dialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int which) {
                             if (!taskNameEntry.getText().toString().trim().isEmpty()) {
                                 String taskName = taskNameEntry.getText().toString();
-                                taskListener.attachTaskSettings(taskName);
+                                String taskDescription = taskDescriptionEntry.getText().toString();
+                                taskListener.attachTaskSettings(taskName, taskDescription);
+
                             } else
                                 Log.d("Success Check", "Task should not have been added! was empty!");
                     }
@@ -57,7 +60,7 @@ public class Create_Task_Dialog extends DialogFragment {
     }
 
     public interface CreateTaskListener{
-        void attachTaskSettings(String _taskName);
+        void attachTaskSettings(String _taskName, String _taskDescription);
     }
 }
 

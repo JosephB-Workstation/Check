@@ -20,7 +20,7 @@ import com.check.app.R;
 import java.util.ArrayList;
 
 public class Edit_Task_Dialog extends DialogFragment {
-    private EditText taskNameEntry;
+    private EditText taskNameEntry, taskDescriptionEntry;
     private editTaskListener taskListener;
     private int position;
 
@@ -31,7 +31,9 @@ public class Edit_Task_Dialog extends DialogFragment {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_create_task, null);
         taskNameEntry = view.findViewById(R.id.taskName);
+        taskDescriptionEntry = view.findViewById(R.id.taskDescription);
         taskNameEntry.setText(getArguments().getString("taskName"), TextView.BufferType.EDITABLE);
+        taskDescriptionEntry.setText(getArguments().getString("taskDescription"), TextView.BufferType.EDITABLE);
         position = getArguments().getInt("position");
         String title = ("Editing " + getArguments().get("taskName") + ":");
         dialogBuilder.setView(view)
@@ -41,7 +43,8 @@ public class Edit_Task_Dialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int which) {
                             if (!taskNameEntry.getText().toString().trim().isEmpty()) {
                                 String taskName = taskNameEntry.getText().toString();
-                                taskListener.attachUpdatedTaskSettings(taskName, position);
+                                String taskDescription = taskDescriptionEntry.getText().toString();
+                                taskListener.attachUpdatedTaskSettings(taskName,  taskDescription, position);
                             } else
                                 Log.d("Success Check", "Task should not have been changed! name was empty!");
                     }
@@ -63,7 +66,7 @@ public class Edit_Task_Dialog extends DialogFragment {
     }
 
     public interface editTaskListener{
-        void attachUpdatedTaskSettings(String _taskName, int _position);
+        void attachUpdatedTaskSettings(String _taskName, String _taskDescription, int _position);
     }
 
 }

@@ -16,13 +16,35 @@
     </TextView>
 
     <EditText
-        android:layout_width="200dp"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:hint="Enter Task Name"
+        android:hint="Enter Task Name - Necessary"
         android:inputType="text"
         android:text=""
         android:autofillHints="Task name"
         android:id="@+id/taskName">
+
+    </EditText>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Task Description:"
+        android:layout_marginTop="20dp"
+        android:textSize="20sp">
+
+    </TextView>
+
+    <EditText
+        android:id="@+id/taskDescription"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:autofillHints="Task description"
+        android:hint="Enter a description"
+        android:maxLength="2000"
+        android:maxLines="4"
+        android:inputType="textMultiLine"
+        android:text="">
 
     </EditText>
 

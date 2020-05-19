@@ -58,15 +58,17 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHo
             @Override
             public void onClick(View v){
                 String taskName = taskList.get(position).getTaskName();
+                String taskDescription = taskList.get(position).getTaskDescription();
                 int arraypos = position;
-                openDialogFragment(taskName, arraypos);
+                openDialogFragment(taskName, taskDescription, arraypos);
             }
         });
     }
 
-    private void openDialogFragment(String _taskName, int _arraypos){
+    private void openDialogFragment(String _taskName, String _taskDescription, int _arraypos){
         Bundle deliverTask = new Bundle();
         deliverTask.putString("taskName", _taskName);
+        deliverTask.putString("taskDescription", _taskDescription);
         deliverTask.putInt("position", _arraypos);
         Edit_Task_Dialog editTask = new Edit_Task_Dialog();
         editTask.setArguments(deliverTask);
@@ -83,7 +85,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHo
     }
 
     public class TaskListViewHolder extends RecyclerView.ViewHolder{
-        TextView vhTask;
+        TextView vhTask; //vh is for view holder.
         Button vhCheckbox;
         Button vhEditButton;
         ImageView vhCheckBoxState;
