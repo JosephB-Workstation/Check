@@ -25,8 +25,8 @@ import java.util.ArrayList;
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHolder> {
     private ArrayList<TaskObject> taskList;
     private Context context;
-    private FragmentManager fm;
-    public TaskAdapter( Context _context, ArrayList<TaskObject> taskList, FragmentManager _fm){
+    private FragmentManager fm; // needed to make dialogs
+    public TaskAdapter( Context _context, ArrayList<TaskObject> taskList, FragmentManager _fm){ //Constructor from List_Activity, now granted power to make dialogs.
         this.taskList = taskList; //updates tasks.
         this.context = _context;
         this.fm = _fm;
@@ -36,7 +36,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHo
     public TaskListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_task, null, false);
         RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutView.setLayoutParams(lp);
+        layoutView.setLayoutParams(lp); //parameters here stop the recycler view from going crazy. and tell it what it's working with.
 
         TaskListViewHolder taskseer = new TaskListViewHolder(layoutView); // assigns parameters above to the view holder
 
@@ -45,28 +45,28 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHo
 
     @Override
     public void onBindViewHolder(@NonNull TaskListViewHolder holder, final int position) {
-        holder.vhTask.setText(taskList.get(position).getTaskName());
-        holder.vhCheckBoxState.setImageResource(taskList.get(position).getCheckboxStateSource());
+        holder.vhTask.setText(taskList.get(position).getTaskName()); //sets the name-text for each task in the list
+        holder.vhCheckBoxState.setImageResource(taskList.get(position).getCheckboxStateSource()); // checks if each task is checked or not, displays image accordingly.
         holder.vhCheckbox.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) { // button handler for the checkboxes, checks or unchecks stuff.
                 taskList.get(position).setCheckBoxState();
                 notifyDataSetChanged();
             }
         });
         holder.vhEditButton.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View v){
-                String taskName = taskList.get(position).getTaskName();
-                String taskDescription = taskList.get(position).getTaskDescription();
-                int arraypos = position;
-                openDialogFragment(taskName, taskDescription, arraypos);
+            public void onClick(View v){ // button appended to the names of each task, allowing for editing. The fun stuff
+                String taskName = taskList.get(position).getTaskName(); //gets task name for package
+                String taskDescription = taskList.get(position).getTaskDescription(); // gets task description for package
+                int arraypos = position; // gets array position for package
+                openDialogFragment(taskName, taskDescription, arraypos); // sends off to a new function
             }
         });
     }
 
     private void openDialogFragment(String _taskName, String _taskDescription, int _arraypos){
-        Bundle deliverTask = new Bundle();
+        Bundle deliverTask = new Bundle(); //creates a new bundle, stores all the necessary info for editing, sends to Edit_Task_Dialog
         deliverTask.putString("taskName", _taskName);
         deliverTask.putString("taskDescription", _taskDescription);
         deliverTask.putInt("position", _arraypos);
@@ -77,7 +77,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHo
 
     @Override
     public int getItemCount() {
-        if(taskList != null){
+        if(taskList != null){ //grabs item count if it's not empty, or returns 0 if it is.
             return taskList.size();
         }
         else

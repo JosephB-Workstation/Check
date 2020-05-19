@@ -26,8 +26,8 @@ public class Create_Task_Dialog extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_create_task, null);
-        taskNameEntry = view.findViewById(R.id.taskName);
+        View view = inflater.inflate(R.layout.dialog_create_task, null);//bureaucracy of setting up a dialog
+        taskNameEntry = view.findViewById(R.id.taskName);// instantiates the name and description edittext
         taskDescriptionEntry = view.findViewById(R.id.taskDescription);
         dialogBuilder.setView(view)
                 .setTitle("Create a new task")
@@ -35,12 +35,10 @@ public class Create_Task_Dialog extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                             if (!taskNameEntry.getText().toString().trim().isEmpty()) {
-                                String taskName = taskNameEntry.getText().toString();
+                                String taskName = taskNameEntry.getText().toString();// copies name and description into the attach
                                 String taskDescription = taskDescriptionEntry.getText().toString();
                                 taskListener.attachTaskSettings(taskName, taskDescription);
-
-                            } else
-                                Log.d("Success Check", "Task should not have been added! was empty!");
+                            }
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -56,11 +54,11 @@ public class Create_Task_Dialog extends DialogFragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        taskListener = (CreateTaskListener)context;
+        taskListener = (CreateTaskListener)context;//instantiate listener
     }
 
     public interface CreateTaskListener{
-        void attachTaskSettings(String _taskName, String _taskDescription);
+        void attachTaskSettings(String _taskName, String _taskDescription ); //interface function to deliver to list activity
     }
 }
 

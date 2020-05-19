@@ -14,32 +14,35 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import java.util.ArrayList;
+
 
 public class Create_List_Dialog extends DialogFragment {
     private EditText listNameEntry;
     private CreateListListener listListener;
 
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = requireActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_create_list, null);
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity()); //custom layout
+        LayoutInflater inflater = requireActivity().getLayoutInflater(); // inflater for custom layout
+        View view = inflater.inflate(R.layout.dialog_create_list, null); // view for the custom inflater, and setting the layout file.
         dialogBuilder.setView(view)
-                .setTitle("Create a new list")
+                .setTitle("Create a new list")//title
                 .setPositiveButton("Create list", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) { //any settings should be configured here while you have the chance, and sent to attachListSettings within the interface.
                         if(!listNameEntry.getText().toString().trim().isEmpty()){ //if statement handles empty names.
                             String listName = listNameEntry.getText().toString();
-                            listListener.attachListSettings(listName);
+                            listListener.attachListSettings(listName); //adds listed variables into listener for delivery
                         }
-                        else Log.d("False", "It worked! List not created!");
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
                     }
                 });
         listNameEntry = view.findViewById(R.id.listName);
@@ -49,11 +52,11 @@ public class Create_List_Dialog extends DialogFragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        listListener = (CreateListListener)context;
+        listListener = (CreateListListener)context; // instantiates listener
     }
 
     public interface CreateListListener{
-        void attachListSettings(String _listName);
+        void attachListSettings(String _listName); // interface to attach to the main page that uses this.
     }
 
 }

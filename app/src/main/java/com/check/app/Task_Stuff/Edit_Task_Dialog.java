@@ -29,13 +29,13 @@ public class Edit_Task_Dialog extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_create_task, null);
-        taskNameEntry = view.findViewById(R.id.taskName);
+        View view = inflater.inflate(R.layout.dialog_create_task, null); //bureaucracy to make custom dialog
+        taskNameEntry = view.findViewById(R.id.taskName);//instantiate name and description
         taskDescriptionEntry = view.findViewById(R.id.taskDescription);
-        taskNameEntry.setText(getArguments().getString("taskName"), TextView.BufferType.EDITABLE);
+        taskNameEntry.setText(getArguments().getString("taskName"), TextView.BufferType.EDITABLE); // because this is an edit I wanted to have the ability to see the old text in the edits, the next handful of lines pull necessary data for later in bundle
         taskDescriptionEntry.setText(getArguments().getString("taskDescription"), TextView.BufferType.EDITABLE);
-        position = getArguments().getInt("position");
-        String title = ("Editing " + getArguments().get("taskName") + ":");
+        position = getArguments().getInt("position"); // array list index, because we're editing a specific entry.
+        String title = ("Editing " + getArguments().get("taskName") + ":"); // editing <task name>:
         dialogBuilder.setView(view)
                 .setTitle(title)
                 .setPositiveButton("Save Task", new DialogInterface.OnClickListener() {
@@ -44,9 +44,8 @@ public class Edit_Task_Dialog extends DialogFragment {
                             if (!taskNameEntry.getText().toString().trim().isEmpty()) {
                                 String taskName = taskNameEntry.getText().toString();
                                 String taskDescription = taskDescriptionEntry.getText().toString();
-                                taskListener.attachUpdatedTaskSettings(taskName,  taskDescription, position);
-                            } else
-                                Log.d("Success Check", "Task should not have been changed! name was empty!");
+                                taskListener.attachUpdatedTaskSettings(taskName,  taskDescription, position); //puts position into the mix so we can edit the entry directly/
+                            }
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -62,11 +61,11 @@ public class Edit_Task_Dialog extends DialogFragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        taskListener = (editTaskListener)context;
+        taskListener = (editTaskListener)context;//instantiate listener
     }
 
     public interface editTaskListener{
-        void attachUpdatedTaskSettings(String _taskName, String _taskDescription, int _position);
+        void attachUpdatedTaskSettings(String _taskName, String _taskDescription, int _position);//sends the dialog information and position information to the List_Activity
     }
 
 }
