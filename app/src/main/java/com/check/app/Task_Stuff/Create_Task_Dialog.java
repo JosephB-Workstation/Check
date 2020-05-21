@@ -29,6 +29,7 @@ import com.check.app.R;
 
 import java.sql.Time;
 import java.util.Calendar;
+import java.util.Date;
 
 public class Create_Task_Dialog extends DialogFragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener{
     private EditText taskNameEntry, taskDescriptionEntry;
@@ -64,10 +65,12 @@ public class Create_Task_Dialog extends DialogFragment implements DatePickerDial
         dataholder = view.findViewById(R.id.toggleDueView);
         dataholder.setVisibility(View.INVISIBLE);
 
-        Calendar c = Calendar.getInstance();
+        //set to current date
+        final Calendar c = Calendar.getInstance();
         year = c.get(Calendar.YEAR);
         month = c.get(Calendar.MONTH);
         day = c.get(Calendar.DAY_OF_MONTH);
+        timeViewer.setText(new StringBuilder().append(this.hour).append(":").append(this.minute));
 
         mdueDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,7 +111,13 @@ public class Create_Task_Dialog extends DialogFragment implements DatePickerDial
                             if (!taskNameEntry.getText().toString().trim().isEmpty()) {
                                 String taskName = taskNameEntry.getText().toString();// copies name and description into the attach
                                 String taskDescription = taskDescriptionEntry.getText().toString();
-                                taskListener.attachTaskSettings(taskName, taskDescription);
+                                if(!attachDue){
+                                taskListener.attachTaskSettings(taskName, taskDescription);}
+                                else if(attachDue){
+                                    Calendar date = Calendar.getInstance();
+                                    date.set(year, month, day, hour, minute);
+                                    taskListener.attachTaskSettings(taskName, taskDescription, date);
+                                }
                             }
                     }
                 })
@@ -145,6 +154,8 @@ public class Create_Task_Dialog extends DialogFragment implements DatePickerDial
 
     public interface CreateTaskListener{
         void attachTaskSettings(String _taskName, String _taskDescription ); //interface function to deliver to list activity
+        void attachTaskSettings(String _taskName, String _taskDescription, Calendar date); //interface function to deliver to list activity if a due date exists
+
     }
 
 }

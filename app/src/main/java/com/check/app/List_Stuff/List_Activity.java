@@ -22,6 +22,8 @@ import com.check.app.Task_Stuff.TaskAdapter;
 import com.check.app.Task_Stuff.TaskObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class List_Activity extends AppCompatActivity implements Create_Task_Dialog.CreateTaskListener, Edit_Task_Dialog.editTaskListener, List_Color_Settings.ColorSettingsListListener {
     private RecyclerView lTasks; //First three variables are necessary for recycler view
@@ -75,6 +77,12 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
     @Override
     public void attachTaskSettings(String _taskName, String _taskDescription) { //listener to bring in created tasks from a successful dialog
         TaskObject newTask = new TaskObject(_taskName, _taskDescription); //New task constructor (TaskObject)
+        taskList.add(newTask);//add to arraylist
+        lTaskAdapter.notifyDataSetChanged();//update recycler
+    }
+
+    public void attachTaskSettings(String _taskName, String _taskDescription, Calendar date){
+        TaskObject newTask = new TaskObject(_taskName, _taskDescription, date);
         taskList.add(newTask);//add to arraylist
         lTaskAdapter.notifyDataSetChanged();//update recycler
     }
