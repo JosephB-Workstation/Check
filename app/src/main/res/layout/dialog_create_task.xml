@@ -47,5 +47,74 @@
         android:text="">
 
     </EditText>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/toggleDueView">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Task due: "
+        android:id="@+id/taskDue">
+
+    </TextView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="12/12/1212"
+        android:id = "@+id/dayView"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@id/taskDue">
+    </TextView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00"
+        android:id = "@+id/timeView"
+        android:layout_toRightOf="@id/dayView">
+
+    </TextView>
+</RelativeLayout>
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set due date"
+        android:background="@android:color/transparent"
+        android:layout_marginTop="5dp"
+        android:id="@+id/dueDateButton">
+
+    </Button>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/dueDateButton"
+        android:text="Set due time"
+        android:background="@android:color/transparent"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="15dp"
+        android:id="@+id/dueTimeButton">
+
+    </Button>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/dueTimeButton"
+        android:text="Due Toggle: off"
+        android:background="@android:color/transparent"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="15dp"
+        android:id="@+id/dueToggleButton">
+
+    </Button>
+
+</RelativeLayout>
 
 </LinearLayout>
