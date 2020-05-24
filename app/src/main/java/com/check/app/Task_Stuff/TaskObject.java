@@ -15,6 +15,7 @@ public class TaskObject {
     private int checkboxState;
     private int checkboxStateSource;
     private Calendar dueDate;
+    private  Timer dueTimer;
     public TaskObject(String taskName, String taskDescription){
         this.taskName = taskName;
         this.taskDescription = taskDescription;
@@ -27,7 +28,7 @@ public class TaskObject {
         this.checkboxState = 0;
         this.checkboxStateSource = R.drawable.notchecked;
         this.dueDate = dueDate;
-        Timer dueTimer = new Timer();
+        dueTimer = new Timer();
         TimerTask dueExecutor = new TimerTask() {
             @Override
             public void run() {
@@ -44,6 +45,14 @@ public class TaskObject {
         return taskDescription;
     }
     public int getcheckboxState(){return checkboxState;}
+    public boolean getTimerState(){
+        if (dueTimer != null){
+            return true;
+        } else return false;
+    }
+    public Calendar getCalendar(){
+        return dueDate;
+    }
     public int getCheckboxStateSource(){return checkboxStateSource;}
 
     public void setCheckBoxState(){
@@ -69,5 +78,37 @@ public class TaskObject {
     }
     public void setTaskDescription(String newDescription){
         taskDescription = newDescription;
+    }
+
+
+    public void updateTimer(Calendar _calendar){
+                dueDate = _calendar;
+                dueDate.set(_calendar.get(_calendar.YEAR), _calendar.get(_calendar.MONTH), _calendar.get(_calendar.DAY_OF_MONTH), _calendar.get(_calendar.HOUR_OF_DAY), _calendar.get(_calendar.MINUTE));
+                if (getTimerState()) {
+                    dueTimer.cancel();
+                    dueTimer = new Timer();
+                    TimerTask dueExecutor = new TimerTask() {
+                        @Override
+                        public void run() {
+                            setLateCheckBoxState();
+                        }
+                    };
+                    dueTimer.schedule(dueExecutor, dueDate.getTime());
+
+                }
+                else{
+                    dueTimer = new Timer();
+                    TimerTask dueExecutor = new TimerTask() {
+                        @Override
+                        public void run() {
+                            setLateCheckBoxState();
+                        }
+                    };
+                    dueTimer.schedule(dueExecutor, dueDate.getTime());
+                }
+    }
+    public void updateTimer(){
+        dueTimer.cancel();
+        dueTimer.purge();
     }
 }

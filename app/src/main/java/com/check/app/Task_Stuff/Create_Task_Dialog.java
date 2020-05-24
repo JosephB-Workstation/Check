@@ -70,6 +70,9 @@ public class Create_Task_Dialog extends DialogFragment implements DatePickerDial
         year = c.get(Calendar.YEAR);
         month = c.get(Calendar.MONTH);
         day = c.get(Calendar.DAY_OF_MONTH);
+        hour = c.get(Calendar.HOUR_OF_DAY);
+        minute = c.get(Calendar.MINUTE);
+        dayViewer.setText(new StringBuilder().append(this.month + 1).append("/").append(this.day).append("/").append(this.year).append(" "));
         timeViewer.setText(new StringBuilder().append(this.hour).append(":").append(this.minute));
 
         mdueDate.setOnClickListener(new View.OnClickListener() {

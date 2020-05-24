@@ -1,15 +1,21 @@
 package com.check.app.Task_Stuff;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,11 +24,17 @@ import androidx.fragment.app.DialogFragment;
 import com.check.app.R;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
-public class Edit_Task_Dialog extends DialogFragment {
+public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener{
     private EditText taskNameEntry, taskDescriptionEntry;
     private editTaskListener taskListener;
-    private int position;
+    private int position, year, month, day, hour, minute;
+    private Button mdueDate, mdueTime, mdueToggle;
+    private TextView dayViewer, timeViewer;
+    private RelativeLayout dataholder;
+    private Boolean attachDue;
+    private Calendar dueDate, defaultCalendar;
 
     @NonNull
     @Override
@@ -30,12 +42,86 @@ public class Edit_Task_Dialog extends DialogFragment {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_create_task, null); //bureaucracy to make custom dialog
+
+
         taskNameEntry = view.findViewById(R.id.taskName);//instantiate name and description
         taskDescriptionEntry = view.findViewById(R.id.taskDescription);
         taskNameEntry.setText(getArguments().getString("taskName"), TextView.BufferType.EDITABLE); // because this is an edit I wanted to have the ability to see the old text in the edits, the next handful of lines pull necessary data for later in bundle
         taskDescriptionEntry.setText(getArguments().getString("taskDescription"), TextView.BufferType.EDITABLE);
         position = getArguments().getInt("position"); // array list index, because we're editing a specific entry.
+
+
+        //due date Buttons
+        mdueDate =  view.findViewById(R.id.dueDateButton);
+        mdueTime = view.findViewById(R.id.dueTimeButton);
+        mdueToggle = view.findViewById(R.id.dueToggleButton);
+
+        //due date Texts
+        dayViewer = view.findViewById(R.id.dayView);
+        timeViewer = view.findViewById(R.id.timeView);
+
+        dataholder = view.findViewById(R.id.toggleDueView);
+        if(getArguments().containsKey("calendar")) {
+            dueDate = (Calendar) getArguments().getSerializable("calendar");
+            attachDue = true;
+            dataholder.setVisibility(View.VISIBLE);
+            mdueToggle.setText("Due Toggle: on");
+            year = dueDate.get(dueDate.YEAR) ;
+            month = dueDate.get(dueDate.MONTH);
+            day = dueDate.get(dueDate.DAY_OF_MONTH);
+            hour = dueDate.get(dueDate.HOUR_OF_DAY);
+            minute = dueDate.get(dueDate.MINUTE);
+            dayViewer.setText(new StringBuilder().append(this.month +1).append("/").append(this.day).append("/").append(this.year).append(" "));
+            timeViewer.setText(new StringBuilder().append(this.hour).append(":").append(this.minute));
+
+        }else{
+            attachDue = false;
+            dataholder.setVisibility(View.INVISIBLE);
+            mdueToggle.setText("Due Toggle: off");
+            defaultCalendar = Calendar.getInstance();
+            year = defaultCalendar.get(defaultCalendar.YEAR) ;
+            month = defaultCalendar.get(defaultCalendar.MONTH);
+            day = defaultCalendar.get(defaultCalendar.DAY_OF_MONTH);
+            hour = defaultCalendar.get(defaultCalendar.HOUR_OF_DAY);
+            minute = defaultCalendar.get(defaultCalendar.MINUTE);
+            dayViewer.setText(new StringBuilder().append(this.month +1).append("/").append(this.day).append("/").append(this.year).append(" "));
+            timeViewer.setText(new StringBuilder().append(this.hour).append(":").append(this.minute));
+        }
+
+
+        mdueDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), Edit_Task_Dialog.this,  year, month, day);
+                datePickerDialog.show();
+            }
+        });
+
+        mdueTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), Edit_Task_Dialog.this, hour, minute, true);
+                timePickerDialog.show();
+            }
+        });
+
+        mdueToggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!attachDue){
+                    attachDue = true;
+                    dataholder.setVisibility(View.VISIBLE);
+                    mdueToggle.setText("Due Toggle: on");
+                }
+                else{
+                    attachDue = false;
+                    dataholder.setVisibility(View.INVISIBLE);
+                    mdueToggle.setText("Due Toggle: off");
+                }
+            }
+        });
         String title = ("Editing " + getArguments().get("taskName") + ":"); // editing <task name>:
+
         dialogBuilder.setView(view)
                 .setTitle(title)
                 .setPositiveButton("Save Task", new DialogInterface.OnClickListener() {
@@ -44,7 +130,14 @@ public class Edit_Task_Dialog extends DialogFragment {
                             if (!taskNameEntry.getText().toString().trim().isEmpty()) {
                                 String taskName = taskNameEntry.getText().toString();
                                 String taskDescription = taskDescriptionEntry.getText().toString();
+                                if(!attachDue)
                                 taskListener.attachUpdatedTaskSettings(taskName,  taskDescription, position); //puts position into the mix so we can edit the entry directly/
+                                else{
+                                    if(dueDate == null){
+                                    dueDate = defaultCalendar;}
+                                    dueDate.set(year, month, day, hour, minute);
+                                    taskListener.attachUpdatedTaskSettings(taskName, taskDescription, position, dueDate);
+                                }
                             }
                     }
                 })
@@ -54,7 +147,6 @@ public class Edit_Task_Dialog extends DialogFragment {
 
                     }
                 });
-
         return dialogBuilder.create();
     }
 
@@ -64,8 +156,24 @@ public class Edit_Task_Dialog extends DialogFragment {
         taskListener = (editTaskListener)context;//instantiate listener
     }
 
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        this.year = year;
+        this.month = month;
+        this.day = dayOfMonth;
+        dayViewer.setText(new StringBuilder().append(this.month + 1).append("/").append(this.day).append("/").append(this.year).append(" "));
+    }
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        this.hour = hourOfDay;
+        this.minute = minute;
+        timeViewer.setText(new StringBuilder().append(this.hour).append(":").append(this.minute));
+    }
+
     public interface editTaskListener{
         void attachUpdatedTaskSettings(String _taskName, String _taskDescription, int _position);//sends the dialog information and position information to the List_Activity
+        void attachUpdatedTaskSettings(String _taskName, String _taskDescription, int _position, Calendar dueDate);
     }
 
 }

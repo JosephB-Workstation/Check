@@ -21,6 +21,7 @@ import com.check.app.List_Stuff.List_Activity;
 import com.check.app.R;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHolder> {
     private ArrayList<TaskObject> taskList;
@@ -60,9 +61,24 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHo
                 String taskName = taskList.get(position).getTaskName(); //gets task name for package
                 String taskDescription = taskList.get(position).getTaskDescription(); // gets task description for package
                 int arraypos = position; // gets array position for package
+                if(taskList.get(position).getTimerState()){ // if there is a due date
+                    Calendar dueDate = taskList.get(position).getCalendar(); //grab it's calendar
+                    openDialogFragment(taskName, taskDescription, arraypos, dueDate); //send it to opendialogfragment
+                }else
                 openDialogFragment(taskName, taskDescription, arraypos); // sends off to a new function
             }
         });
+    }
+
+    private void openDialogFragment(String _taskName, String _taskDescription, int _arraypos, Calendar calendar){
+        Bundle deliverTask = new Bundle(); //creates a new bundle, stores all the necessary info for editing, sends to Edit_Task_Dialog
+        deliverTask.putString("taskName", _taskName);
+        deliverTask.putString("taskDescription", _taskDescription);
+        deliverTask.putInt("position", _arraypos);
+        deliverTask.putSerializable("calendar", calendar);
+        Edit_Task_Dialog editTask = new Edit_Task_Dialog();
+        editTask.setArguments(deliverTask);
+        editTask.show(fm, "editTask");
     }
 
     private void openDialogFragment(String _taskName, String _taskDescription, int _arraypos){

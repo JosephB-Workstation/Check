@@ -21,9 +21,12 @@ import com.check.app.Task_Stuff.Edit_Task_Dialog;
 import com.check.app.Task_Stuff.TaskAdapter;
 import com.check.app.Task_Stuff.TaskObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class List_Activity extends AppCompatActivity implements Create_Task_Dialog.CreateTaskListener, Edit_Task_Dialog.editTaskListener, List_Color_Settings.ColorSettingsListListener {
     private RecyclerView lTasks; //First three variables are necessary for recycler view
@@ -60,6 +63,8 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
             case R.id.addTask:
                 Create_Task_Dialog taskdialog = new Create_Task_Dialog(); // creates a dialog for adding a new task (Create_Task_Dialog)
                 taskdialog.show(getSupportFragmentManager(), "Create Task");
+                final Map newMessageMap = new HashMap<>();
+
                 return true;
             case R.id.listSettings:
                 List_Color_Settings colordialog = new List_Color_Settings(); // creates a dialog for changing the color (List_Color_Settings)
@@ -101,9 +106,18 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
 
     @Override
     public void attachUpdatedTaskSettings(String _taskName, String _taskDescription, int _position) { // Listener that updates a task at a specific position in the arraylist with new information, such as name and description. (Dialog created in TaskAdapter, dialog is Edit_Task_Dialog)
-        Log.d("Task updated", _taskName);
         taskList.get(_position).setTaskName(_taskName);
         taskList.get(_position).setTaskDescription(_taskDescription);
+        if(taskList.get(_position).getTimerState()){
+            taskList.get(_position).updateTimer();
+        }
+        lTaskAdapter.notifyDataSetChanged();
+    }
+
+    public void attachUpdatedTaskSettings(String _taskName, String _taskDescription, int _position, Calendar _dueDate){
+        taskList.get(_position).setTaskName(_taskName);
+        taskList.get(_position).setTaskDescription(_taskDescription);
+        taskList.get(_position).updateTimer(_dueDate);
         lTaskAdapter.notifyDataSetChanged();
     }
 
