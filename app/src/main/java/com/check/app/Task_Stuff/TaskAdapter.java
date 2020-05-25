@@ -27,9 +27,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHo
     private ArrayList<TaskObject> taskList;
     private Context context;
     private FragmentManager fm; // needed to make dialogs
-    public TaskAdapter( Context _context, ArrayList<TaskObject> taskList, FragmentManager _fm){ //Constructor from List_Activity, now granted power to make dialogs.
+    public TaskAdapter( ArrayList<TaskObject> taskList, FragmentManager _fm){ //Constructor from List_Activity, now granted power to make dialogs.
         this.taskList = taskList; //updates tasks.
-        this.context = _context;
         this.fm = _fm;
     }
     @NonNull

@@ -12,7 +12,11 @@ import android.view.MenuItem;
 
 import com.check.app.List_Stuff.List_Activity;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 public class MainActivity extends AppCompatActivity implements Create_List_Dialog.CreateListListener{ //main logged in menu
+    private ArrayList<Map> listOfLists;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
     public void attachListSettings(String _listName) { // handles pulling data from the dialog box for making lists. Passes list metadata via intent.
         Intent listIntent = new Intent(MainActivity.this, List_Activity.class); //creates an intent
         listIntent.putExtra("listName", _listName); //places the list name into the intent so it can be used in the list activity
+        listIntent.putExtra("mode", 1);
         startActivity(listIntent); // starts list activity with the packaged intent. (List_Activity)
-
     }
 }

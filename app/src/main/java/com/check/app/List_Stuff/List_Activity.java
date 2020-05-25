@@ -7,24 +7,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 
-import com.check.app.Create_List_Dialog;
 import com.check.app.R;
 import com.check.app.Task_Stuff.Create_Task_Dialog;
 import com.check.app.Task_Stuff.Edit_Task_Dialog;
 import com.check.app.Task_Stuff.TaskAdapter;
 import com.check.app.Task_Stuff.TaskObject;
 
-import java.io.Serializable;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,21 +34,31 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
     private RecyclerView.LayoutManager lTaskLayoutManager;
     private String listName; // A string to store the list's name
     private ArrayList<TaskObject> taskList; // An arraylist to store tasks
-    private static Context context; // a context because I think I need it for editing tasks
     private LinearLayout background; // a linear layout variable so I can change list backgrounds
+    private int storagePointer, backgroundColorId;
+    private int backgroundId;
+    SharedPreferences pref;
+    SharedPreferences.Editor editor;
+    HashMap<String, Object> listMap;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_view); //activity view set
-
         Intent intent = getIntent(); // prepares an intent for later use
+        pref = getApplicationContext().getSharedPreferences("Check", 0);
+        editor = pref.edit();
+
+        if(intent.getIntExtra("mode", 1) == 1){ // if the list was created, instead of loaded.
         Toolbar toolbar = findViewById(R.id.listToolBar); // list toolbar grabbed
         listName = intent.getStringExtra("listName"); //grabs the name from MainActivity, which got it from the dialog
         toolbar.setTitle(listName);// sets the local string variable to be the title of the toolbar.
+        listMap = new HashMap<String, Object>();
+        listMap.put("name", listName);
         setSupportActionBar(toolbar);
         taskListStarter(); // function to start the recycler view
+        storagePointer = taskList.size();}
     }
 
     public boolean onCreateOptionsMenu(Menu menu) { // makes toolbar options
@@ -73,6 +83,8 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
             case R.id.listClear:
                 taskList.clear(); //clears the arraylist
                 lTaskAdapter.notifyDataSetChanged();
+                listMap.clear();
+                listMap.put("name", listName);
             default: //uhoh
                 return super.onOptionsItemSelected(item);
         }
@@ -84,12 +96,16 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         TaskObject newTask = new TaskObject(_taskName, _taskDescription); //New task constructor (TaskObject)
         taskList.add(newTask);//add to arraylist
         lTaskAdapter.notifyDataSetChanged();//update recycler
+        storagePointer = taskList.size();
+        listMap.put(Integer.toString((storagePointer -1)), taskList.get((storagePointer -1)));
     }
 
     public void attachTaskSettings(String _taskName, String _taskDescription, Calendar date){
         TaskObject newTask = new TaskObject(_taskName, _taskDescription, date);
         taskList.add(newTask);//add to arraylist
         lTaskAdapter.notifyDataSetChanged();//update recycler
+        storagePointer = taskList.size();
+        listMap.put(Integer.toString((storagePointer -1)), taskList.get((storagePointer -1)));
     }
 
     private void taskListStarter(){
@@ -99,7 +115,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         lTasks.setHasFixedSize(false); // allows for the better scroll wheel to work
         lTaskLayoutManager = new LinearLayoutManager(getApplicationContext(), RecyclerView.VERTICAL, false); // layout manager that handles which way the recycler view appends items to a list
         lTasks.setLayoutManager(lTaskLayoutManager);// configures layout manager for list page
-        lTaskAdapter = new TaskAdapter(context, taskList, this.getSupportFragmentManager()); // constructor for class: TaskAdapter, which handles checkboxes and edits.
+        lTaskAdapter = new TaskAdapter(taskList, this.getSupportFragmentManager()); // constructor for class: TaskAdapter, which handles checkboxes and edits.
         lTasks.setAdapter(lTaskAdapter);//configures adapter to work here.
 
     }
@@ -112,6 +128,8 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
             taskList.get(_position).updateTimer();
         }
         lTaskAdapter.notifyDataSetChanged();
+        listMap.remove(Integer.toString(_position));
+        listMap.put(Integer.toString(_position), taskList.get(_position));
     }
 
     public void attachUpdatedTaskSettings(String _taskName, String _taskDescription, int _position, Calendar _dueDate){
@@ -119,18 +137,40 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         taskList.get(_position).setTaskDescription(_taskDescription);
         taskList.get(_position).updateTimer(_dueDate);
         lTaskAdapter.notifyDataSetChanged();
+        listMap.remove(Integer.toString(_position));
+        listMap.put(Integer.toString(_position), taskList.get(_position));
     }
 
     @Override
     public void attachColorSettings(int colorId) { // listener for the list color swap (List_Color_Settings)
         background = findViewById(R.id.listLayout);
-        int backgroundColorId = colorId;
+        backgroundColorId = colorId;
         if(colorId == 0) backgroundColorId = R.drawable.background_yellow;
         else if(colorId == 1) backgroundColorId = R.drawable.background_blue;
         else if(colorId == 2) backgroundColorId = R.drawable.background_green;
         else if(colorId == 3) backgroundColorId = R.drawable.background_purple;
         background.setBackgroundResource(backgroundColorId);
 
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        JSONObject jsonObject = new JSONObject();
+        for(Map.Entry entry : listMap.entrySet()){
+            try {
+                jsonObject.put((String)entry.getKey(), (Object)entry.getValue());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    //    listMap.forEach((k,v) -> jsonObject.put(k, v));
+        String jsonString = jsonObject.toString();
+        if (pref.contains(listName)) {
+            editor.remove(listName);
+        }
+        editor.putString(listName, jsonString);
+        editor.commit();
     }
 }
 

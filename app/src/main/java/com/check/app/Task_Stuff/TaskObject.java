@@ -4,18 +4,20 @@ import android.widget.Button;
 
 import com.check.app.R;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class TaskObject {
+public class TaskObject implements Serializable {
     private String taskName;
     private String taskDescription;
     private int checkboxState;
     private int checkboxStateSource;
     private Calendar dueDate;
-    private  Timer dueTimer;
+    transient private  Timer dueTimer;
+
     public TaskObject(String taskName, String taskDescription){
         this.taskName = taskName;
         this.taskDescription = taskDescription;
