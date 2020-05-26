@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,13 +20,20 @@ import com.check.app.Task_Stuff.Create_Task_Dialog;
 import com.check.app.Task_Stuff.Edit_Task_Dialog;
 import com.check.app.Task_Stuff.TaskAdapter;
 import com.check.app.Task_Stuff.TaskObject;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.internal.LinkedTreeMap;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class List_Activity extends AppCompatActivity implements Create_Task_Dialog.CreateTaskListener, Edit_Task_Dialog.editTaskListener, List_Color_Settings.ColorSettingsListListener {
@@ -35,8 +43,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
     private String listName; // A string to store the list's name
     private ArrayList<TaskObject> taskList; // An arraylist to store tasks
     private LinearLayout background; // a linear layout variable so I can change list backgrounds
-    private int storagePointer, backgroundColorId;
-    private int backgroundId;
+    private int storagePointer, backgroundColorId, listSize;
     SharedPreferences pref;
     SharedPreferences.Editor editor;
     HashMap<String, Object> listMap;
@@ -49,8 +56,87 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         Intent intent = getIntent(); // prepares an intent for later use
         pref = getApplicationContext().getSharedPreferences("Check", 0);
         editor = pref.edit();
+        listMap = new HashMap<String, Object>();
+        String savedMap;
+        taskListStarter();
+        if(intent.getIntExtra("mode", 1) == 0) {
 
-        if(intent.getIntExtra("mode", 1) == 1){ // if the list was created, instead of loaded.
+            listName = intent.getStringExtra("listName");
+            Gson gson = new Gson();
+            savedMap = pref.getString(listName, "");
+          //  gson.excludeField(new Field("name));
+            java.lang.reflect.Type type = new TypeToken<HashMap<String, Object>>(){}.getType();
+            listMap = gson.fromJson(savedMap, type);
+            for(int i = 0; i < (listMap.size() -1); i++){
+            //    Object newObject = gson.fromJson(savedMap, Object.class);
+            //    taskList.add((TaskObject) newObject);
+
+                taskList.add(gson.fromJson(savedMap, TaskObject.class));
+
+/*                String json = (String) listMap.get(Integer.toString(i));
+                TaskObject object = gson.fromJson(json, TaskObject.class);
+                taskList.add(object);*/
+
+
+
+/*                Type fixtype = new TypeToken<HashMap<String, TaskObject>>(){}.getType();
+                HashMap<String, TaskObject> FixedTasks = new Gson().fromJson((JsonElement) listMap.get(Integer.toString(i)), fixtype);*/
+
+
+
+/*                LinkedTreeMap j = (LinkedTreeMap) listMap.get("1");
+                j.g*/
+
+            }
+/*
+            try{
+            if (pref.contains(listName)) {
+                String jsonString = pref.getString(listName, (new JSONObject()).toString());
+                JSONObject jsonObject = new JSONObject(jsonString);
+                Iterator<String> keysIter = jsonObject.keys();
+                while(keysIter.hasNext()){
+                    String key = keysIter.next();
+                    Object value;
+                     value = (Object) jsonObject.get(key);
+                    listMap.put(key, value);
+                }
+            }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            for(int i = 0; i < (listMap.size() - 1); i++){
+                Gson gson = new Gson();
+               // TaskObject newTask = gson.fromJson(listMap.get(Integer.toString(i)), TaskObject.class);
+                *//*taskList.add((TaskObject) listMap.get(Integer.toString(i)));*//*
+            }
+
+
+           // taskListStarter();
+            listSize = intent.getIntExtra("size", 0);
+  *//*          for(int i = 0; i < listSize; i++){
+                TaskObject newTask = null;
+                try {
+                    String jsonString = (String) listMap.get(Integer.toString(i));
+                    JSONObject jsonObject = new JSONObject(jsonString);
+                    Iterator<String> keysIter = jsonObject.keys();
+                    while(keysIter.hasNext()){
+                        String key = keysIter.next();
+                        newTask = (TaskObject) jsonObject.get(key);
+                    }
+                    taskList.add(newTask);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }*/
+            Toolbar toolbar = findViewById(R.id.listToolBar); // list toolbar grabbed
+            toolbar.setTitle(listName);// sets the local string variable to be the title of the toolbar.
+            setSupportActionBar(toolbar);
+            storagePointer = taskList.size();
+            lTaskAdapter.notifyDataSetChanged();
+        }
+
+        else if(intent.getIntExtra("mode", 1) == 1){ // if the list was created, instead of loaded.
         Toolbar toolbar = findViewById(R.id.listToolBar); // list toolbar grabbed
         listName = intent.getStringExtra("listName"); //grabs the name from MainActivity, which got it from the dialog
         toolbar.setTitle(listName);// sets the local string variable to be the title of the toolbar.
@@ -73,8 +159,6 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
             case R.id.addTask:
                 Create_Task_Dialog taskdialog = new Create_Task_Dialog(); // creates a dialog for adding a new task (Create_Task_Dialog)
                 taskdialog.show(getSupportFragmentManager(), "Create Task");
-                final Map newMessageMap = new HashMap<>();
-
                 return true;
             case R.id.listSettings:
                 List_Color_Settings colordialog = new List_Color_Settings(); // creates a dialog for changing the color (List_Color_Settings)
@@ -156,21 +240,28 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
     @Override
     protected void onStop() {
         super.onStop();
-        JSONObject jsonObject = new JSONObject();
+        Gson gson = new Gson();
+        String taskMapString = gson.toJson(listMap);
+
+        if(pref.contains(listName)){editor.remove(listName);}
+        editor.putString(listName, taskMapString);
+        editor.commit();
+        /*        JSONObject jsonObject = new JSONObject();
         for(Map.Entry entry : listMap.entrySet()){
             try {
                 jsonObject.put((String)entry.getKey(), (Object)entry.getValue());
             } catch (JSONException e) {
                 e.printStackTrace();
+
+
             }
         }
-    //    listMap.forEach((k,v) -> jsonObject.put(k, v));
         String jsonString = jsonObject.toString();
         if (pref.contains(listName)) {
             editor.remove(listName);
         }
         editor.putString(listName, jsonString);
-        editor.commit();
+        editor.commit();*/
     }
 }
 
