@@ -5,6 +5,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.TaskInfo;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -46,7 +47,10 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
     private int storagePointer, backgroundColorId, listSize;
     SharedPreferences pref;
     SharedPreferences.Editor editor;
-    HashMap<String, Object> listMap;
+    SharedPreferences pref2;
+    SharedPreferences.Editor editor2;
+    HashMap<String, TaskObject> listMap;
+    HashMap<String, Object> listInfo;
 
 
     @Override
@@ -56,22 +60,24 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         Intent intent = getIntent(); // prepares an intent for later use
         pref = getApplicationContext().getSharedPreferences("Check", 0);
         editor = pref.edit();
-        listMap = new HashMap<String, Object>();
+        pref2 = getApplicationContext().getSharedPreferences("Check-d", 0);
+        editor2 = pref2.edit();
+        listInfo = new HashMap<String, Object>();
+        listMap = new HashMap<String, TaskObject>();
         String savedMap;
         taskListStarter();
         if(intent.getIntExtra("mode", 1) == 0) {
 
             listName = intent.getStringExtra("listName");
             Gson gson = new Gson();
-            savedMap = pref.getString(listName, "");
-          //  gson.excludeField(new Field("name));
-            java.lang.reflect.Type type = new TypeToken<HashMap<String, Object>>(){}.getType();
+            savedMap = pref2.getString(listName, "");
+            java.lang.reflect.Type type = new TypeToken<HashMap<String, TaskObject>>(){}.getType();
             listMap = gson.fromJson(savedMap, type);
-            for(int i = 0; i < (listMap.size() -1); i++){
+            for(int i = 0; i < (listMap.size()); i++){
             //    Object newObject = gson.fromJson(savedMap, Object.class);
             //    taskList.add((TaskObject) newObject);
 
-                taskList.add(gson.fromJson(savedMap, TaskObject.class));
+                taskList.add(listMap.get(Integer.toString(i)));
 
 /*                String json = (String) listMap.get(Integer.toString(i));
                 TaskObject object = gson.fromJson(json, TaskObject.class);
@@ -132,6 +138,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
             Toolbar toolbar = findViewById(R.id.listToolBar); // list toolbar grabbed
             toolbar.setTitle(listName);// sets the local string variable to be the title of the toolbar.
             setSupportActionBar(toolbar);
+            listInfo.put("name", listName);
             storagePointer = taskList.size();
             lTaskAdapter.notifyDataSetChanged();
         }
@@ -140,8 +147,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         Toolbar toolbar = findViewById(R.id.listToolBar); // list toolbar grabbed
         listName = intent.getStringExtra("listName"); //grabs the name from MainActivity, which got it from the dialog
         toolbar.setTitle(listName);// sets the local string variable to be the title of the toolbar.
-        listMap = new HashMap<String, Object>();
-        listMap.put("name", listName);
+        listInfo.put("name", listName);
         setSupportActionBar(toolbar);
         taskListStarter(); // function to start the recycler view
         storagePointer = taskList.size();}
@@ -168,7 +174,6 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
                 taskList.clear(); //clears the arraylist
                 lTaskAdapter.notifyDataSetChanged();
                 listMap.clear();
-                listMap.put("name", listName);
             default: //uhoh
                 return super.onOptionsItemSelected(item);
         }
@@ -243,8 +248,13 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         Gson gson = new Gson();
         String taskMapString = gson.toJson(listMap);
 
+        if(pref2.contains(listName)){editor2.remove(listName);}
+        editor2.putString(listName, taskMapString);
+        editor2.commit();
+
+        String listSettings = gson.toJson(listInfo);
         if(pref.contains(listName)){editor.remove(listName);}
-        editor.putString(listName, taskMapString);
+        editor.putString(listName, listSettings);
         editor.commit();
         /*        JSONObject jsonObject = new JSONObject();
         for(Map.Entry entry : listMap.entrySet()){
