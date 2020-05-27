@@ -72,8 +72,9 @@ public class TaskObject implements Serializable {
         if(checkboxState == 0){
             checkboxState = 2;
             checkboxStateSource = R.drawable.islate;
-            
         }
+        dueTimer = null;
+        dueDate = null;
     }
     public void setTaskName(String newName){
         taskName = newName;
@@ -112,5 +113,18 @@ public class TaskObject implements Serializable {
     public void updateTimer(){
         dueTimer.cancel();
         dueTimer.purge();
+    }
+
+    public void importTimeCheck(){
+        if(dueDate != null){
+            dueTimer = new Timer();
+            TimerTask dueExecutor = new TimerTask() {
+                @Override
+                public void run() {
+                    setLateCheckBoxState();
+                }
+            };
+            dueTimer.schedule(dueExecutor, dueDate.getTime());
+        }
     }
 }

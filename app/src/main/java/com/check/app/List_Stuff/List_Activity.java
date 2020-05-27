@@ -70,71 +70,15 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
 
             listName = intent.getStringExtra("listName");
             Gson gson = new Gson();
+            gson.newBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
             savedMap = pref2.getString(listName, "");
             java.lang.reflect.Type type = new TypeToken<HashMap<String, TaskObject>>(){}.getType();
             listMap = gson.fromJson(savedMap, type);
             for(int i = 0; i < (listMap.size()); i++){
-            //    Object newObject = gson.fromJson(savedMap, Object.class);
-            //    taskList.add((TaskObject) newObject);
-
                 taskList.add(listMap.get(Integer.toString(i)));
-
-/*                String json = (String) listMap.get(Integer.toString(i));
-                TaskObject object = gson.fromJson(json, TaskObject.class);
-                taskList.add(object);*/
-
-
-
-/*                Type fixtype = new TypeToken<HashMap<String, TaskObject>>(){}.getType();
-                HashMap<String, TaskObject> FixedTasks = new Gson().fromJson((JsonElement) listMap.get(Integer.toString(i)), fixtype);*/
-
-
-
-/*                LinkedTreeMap j = (LinkedTreeMap) listMap.get("1");
-                j.g*/
-
-            }
-/*
-            try{
-            if (pref.contains(listName)) {
-                String jsonString = pref.getString(listName, (new JSONObject()).toString());
-                JSONObject jsonObject = new JSONObject(jsonString);
-                Iterator<String> keysIter = jsonObject.keys();
-                while(keysIter.hasNext()){
-                    String key = keysIter.next();
-                    Object value;
-                     value = (Object) jsonObject.get(key);
-                    listMap.put(key, value);
-                }
-            }
-            }catch (Exception e){
-                e.printStackTrace();
+                taskList.get(i).importTimeCheck();
             }
 
-            for(int i = 0; i < (listMap.size() - 1); i++){
-                Gson gson = new Gson();
-               // TaskObject newTask = gson.fromJson(listMap.get(Integer.toString(i)), TaskObject.class);
-                *//*taskList.add((TaskObject) listMap.get(Integer.toString(i)));*//*
-            }
-
-
-           // taskListStarter();
-            listSize = intent.getIntExtra("size", 0);
-  *//*          for(int i = 0; i < listSize; i++){
-                TaskObject newTask = null;
-                try {
-                    String jsonString = (String) listMap.get(Integer.toString(i));
-                    JSONObject jsonObject = new JSONObject(jsonString);
-                    Iterator<String> keysIter = jsonObject.keys();
-                    while(keysIter.hasNext()){
-                        String key = keysIter.next();
-                        newTask = (TaskObject) jsonObject.get(key);
-                    }
-                    taskList.add(newTask);
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-            }*/
             Toolbar toolbar = findViewById(R.id.listToolBar); // list toolbar grabbed
             toolbar.setTitle(listName);// sets the local string variable to be the title of the toolbar.
             setSupportActionBar(toolbar);
@@ -243,9 +187,10 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         Gson gson = new Gson();
+        gson.newBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
         String taskMapString = gson.toJson(listMap);
 
         if(pref2.contains(listName)){editor2.remove(listName);}
@@ -256,22 +201,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         if(pref.contains(listName)){editor.remove(listName);}
         editor.putString(listName, listSettings);
         editor.commit();
-        /*        JSONObject jsonObject = new JSONObject();
-        for(Map.Entry entry : listMap.entrySet()){
-            try {
-                jsonObject.put((String)entry.getKey(), (Object)entry.getValue());
-            } catch (JSONException e) {
-                e.printStackTrace();
 
-
-            }
-        }
-        String jsonString = jsonObject.toString();
-        if (pref.contains(listName)) {
-            editor.remove(listName);
-        }
-        editor.putString(listName, jsonString);
-        editor.commit();*/
     }
 }
 
