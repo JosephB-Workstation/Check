@@ -44,7 +44,8 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
     private String listName; // A string to store the list's name
     private ArrayList<TaskObject> taskList; // An arraylist to store tasks
     private LinearLayout background; // a linear layout variable so I can change list backgrounds
-    private int storagePointer, backgroundColorId, listSize;
+    private int storagePointer, listSize;
+    private double backgroundColorId;
     SharedPreferences pref;
     SharedPreferences.Editor editor;
     SharedPreferences pref2;
@@ -78,10 +79,12 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
                 taskList.add(listMap.get(Integer.toString(i)));
                 taskList.get(i).importTimeCheck();
             }
-
             Toolbar toolbar = findViewById(R.id.listToolBar); // list toolbar grabbed
             toolbar.setTitle(listName);// sets the local string variable to be the title of the toolbar.
             setSupportActionBar(toolbar);
+            backgroundColorId = intent.getDoubleExtra("listBackground", 0.0);
+            attachColorSettings(backgroundColorId);
+            listInfo.put("background", backgroundColorId);
             listInfo.put("name", listName);
             storagePointer = taskList.size();
             lTaskAdapter.notifyDataSetChanged();
@@ -93,6 +96,8 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         toolbar.setTitle(listName);// sets the local string variable to be the title of the toolbar.
         listInfo.put("name", listName);
         setSupportActionBar(toolbar);
+        backgroundColorId = 0;
+        attachColorSettings(backgroundColorId);
         taskListStarter(); // function to start the recycler view
         storagePointer = taskList.size();}
     }
@@ -176,14 +181,26 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
 
     @Override
     public void attachColorSettings(int colorId) { // listener for the list color swap (List_Color_Settings)
-        background = findViewById(R.id.listLayout);
         backgroundColorId = colorId;
-        if(colorId == 0) backgroundColorId = R.drawable.background_yellow;
-        else if(colorId == 1) backgroundColorId = R.drawable.background_blue;
-        else if(colorId == 2) backgroundColorId = R.drawable.background_green;
-        else if(colorId == 3) backgroundColorId = R.drawable.background_purple;
-        background.setBackgroundResource(backgroundColorId);
-
+        if(colorId == 0) setBackground(R.drawable.background_yellow);
+        else if(colorId == 1) setBackground(R.drawable.background_blue);
+        else if(colorId == 2) setBackground(R.drawable.background_green);
+        else if(colorId == 3) setBackground(R.drawable.background_purple);
+        if(listInfo.containsKey("background")){listInfo.remove("background");}
+        listInfo.put("background", backgroundColorId);
+    }
+    public void attachColorSettings(double colorId){
+        backgroundColorId = colorId;
+        if(colorId == 0) setBackground(R.drawable.background_yellow);
+        else if(colorId == 1) setBackground(R.drawable.background_blue);
+        else if(colorId == 2) setBackground(R.drawable.background_green);
+        else if(colorId == 3) setBackground(R.drawable.background_purple);
+        if(listInfo.containsKey("background")){listInfo.remove("background");}
+        listInfo.put("background", backgroundColorId);
+    }
+    private void setBackground(int backgroundColor){
+        background = findViewById(R.id.listLayout);
+        background.setBackgroundResource(backgroundColor);
     }
 
     @Override

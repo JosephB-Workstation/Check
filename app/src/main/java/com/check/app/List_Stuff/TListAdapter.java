@@ -48,6 +48,7 @@ public class TListAdapter extends RecyclerView.Adapter<TListAdapter.ListViewHold
                 intent.putExtra("listName", listOfLists.get(position).getListName());
                 intent.putExtra("mode", 0);
                 intent.putExtra("size", listOfLists.get(position).getListSize());
+                intent.putExtra("listBackground", listOfLists.get(position).getListBackgroundId());
                 v.getContext().startActivity(intent);
             }
         });
@@ -59,6 +60,11 @@ public class TListAdapter extends RecyclerView.Adapter<TListAdapter.ListViewHold
             return listOfLists.size();
         }
         else return 0;
+    }
+
+    public void filterList(ArrayList<ListObject> filteredList){
+        listOfLists = filteredList;
+        notifyDataSetChanged();
     }
 
     public class ListViewHolder extends RecyclerView.ViewHolder{

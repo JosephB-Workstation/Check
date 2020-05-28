@@ -19,6 +19,15 @@
                 app:title="Check - Your Lists">
 
             </androidx.appcompat.widget.Toolbar>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="List name"
+        android:id="@+id/searchBar"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+
+    </EditText>
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

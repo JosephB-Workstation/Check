@@ -8,10 +8,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 import com.check.app.List_Stuff.ListObject;
 import com.check.app.List_Stuff.List_Activity;
@@ -29,10 +32,11 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements Create_List_Dialog.CreateListListener{ //main logged in menu
     private RecyclerView lLists; //First three variables are necessary for recycler view
-    private RecyclerView.Adapter lListAdapter;
-    private RecyclerView.LayoutManager lTaskLayoutManager;
+    private TListAdapter lListAdapter;
+    private RecyclerView.LayoutManager lListLayoutManager;
     private ArrayList<ListObject> listOfLists;
     SharedPreferences pref;
+    EditText searchBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +47,34 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
         pref = getApplicationContext().getSharedPreferences("Check", 0);
         setSupportActionBar(toolbar);
         ListStarter();
-        listUpdater();
+        searchBar = findViewById(R.id.searchBar);
+
+
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                filter(s.toString());
+            }
+        });
+    }
+    private void filter(String text){
+        ArrayList<ListObject> filteredList = new ArrayList<>();
+
+        for(ListObject item : listOfLists){
+            if(item.getListName().toLowerCase().contains(text.toLowerCase())){
+                filteredList.add(item);
+            }
+        }
+        lListAdapter.filterList(filteredList);
+
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu){ //activates toolbar menu
@@ -79,20 +110,21 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
         lLists = findViewById(R.id.listOfLists); //recycler view pairing
         lLists.setNestedScrollingEnabled(false); // removes scary scroll wheel
         lLists.setHasFixedSize(false); // allows for the better scroll wheel to work
-        lTaskLayoutManager = new LinearLayoutManager(getApplicationContext(), RecyclerView.VERTICAL, false); // layout manager that handles which way the recycler view appends items to a list
-        lLists.setLayoutManager(lTaskLayoutManager);// configures layout manager for list page
+        lListLayoutManager = new LinearLayoutManager(getApplicationContext(), RecyclerView.VERTICAL, false); // layout manager that handles which way the recycler view appends items to a list
+        lLists.setLayoutManager(lListLayoutManager);// configures layout manager for list page
         lListAdapter = new TListAdapter(listOfLists, this.getSupportFragmentManager()); // constructor for class: TaskAdapter, which handles checkboxes and edits.
         lLists.setAdapter(lListAdapter);//configures adapter to work here.
     }
 
     private void listUpdater(){
         listOfLists.clear();
+        searchBar.getText().clear();
         Map<String, ?> allLists = pref.getAll();
         for(Map.Entry<String, ?> entry : allLists.entrySet()){
             String listKey = entry.getKey();
             mapGrabber(listKey);
         }
-        lListAdapter.notifyDataSetChanged();
+        lListAdapter.filterList(listOfLists);
     }
 
     private void mapGrabber(String listKey){
@@ -101,21 +133,6 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
         String savedMap = pref.getString(listKey, "uhoh");
         java.lang.reflect.Type type = new TypeToken<HashMap<String, Object>>(){}.getType();
         newMap = gson.fromJson(savedMap, type);
-/*        try{
-            String jsonString = pref.getString(listKey, (new JSONObject()).toString());
-            JSONObject jsonObject = new JSONObject((jsonString));
-            Iterator<String> keysItr = jsonObject.keys();
-            while(keysItr.hasNext()){
-                String key = keysItr.next();
-                Object value = null;
-                if(key.equals("name")){
-                    value = jsonObject.get(key);
-                    newMap.put(key, value);
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }*/
         ListObject newList = new ListObject(newMap);
         listOfLists.add(newList);
     }
