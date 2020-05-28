@@ -47,8 +47,8 @@ public class TListAdapter extends RecyclerView.Adapter<TListAdapter.ListViewHold
                 Intent intent = new Intent(v.getContext(), List_Activity.class);
                 intent.putExtra("listName", listOfLists.get(position).getListName());
                 intent.putExtra("mode", 0);
-                intent.putExtra("size", listOfLists.get(position).getListSize());
                 intent.putExtra("listBackground", listOfLists.get(position).getListBackgroundId());
+                intent.putExtra("listCategory", listOfLists.get(position).getListCategory());
                 v.getContext().startActivity(intent);
             }
         });

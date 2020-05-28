@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class ListObject {
     private HashMap<String, Object> listData;
-    private String listName;
+    private String listName, listCategory;
     private int listSize;
     private double listBackgroundId;
 
@@ -13,6 +13,11 @@ public class ListObject {
         listName = (String) listData.get("name");
         listSize = (listData.size() - 1);
         listBackgroundId = (Double) listData.get("background");
+        if(listData.containsKey("category")) {
+            listCategory = (String) listData.get("category");
+        }else{
+            listCategory = "None";
+        }
     }
 
     public String getListName(){
@@ -22,6 +27,7 @@ public class ListObject {
         return listSize;
     }
     public double getListBackgroundId() {return listBackgroundId;}
+    public String getListCategory(){return listCategory;}
 
 }
 

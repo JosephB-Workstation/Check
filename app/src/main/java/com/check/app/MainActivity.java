@@ -14,8 +14,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
+import com.check.app.List_Stuff.Category_Search_Dialog;
 import com.check.app.List_Stuff.ListObject;
 import com.check.app.List_Stuff.List_Activity;
 import com.check.app.List_Stuff.TListAdapter;
@@ -30,13 +33,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements Create_List_Dialog.CreateListListener{ //main logged in menu
+public class MainActivity extends AppCompatActivity implements Create_List_Dialog.CreateListListener, Category_Search_Dialog.SearchCategoryListener { //main logged in menu
     private RecyclerView lLists; //First three variables are necessary for recycler view
     private TListAdapter lListAdapter;
     private RecyclerView.LayoutManager lListLayoutManager;
     private ArrayList<ListObject> listOfLists;
+    private ArrayList<String> categories;
     SharedPreferences pref;
     EditText searchBar;
+    Button categoryButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +67,15 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
             @Override
             public void afterTextChanged(Editable s) {
                 filter(s.toString());
+            }
+        });
+
+        categoryButton = findViewById(R.id.categoryButton);
+        categoryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Category_Search_Dialog category_search_dialog = new Category_Search_Dialog();
+                category_search_dialog.show(getSupportFragmentManager(), "Category Search");
             }
         });
     }
@@ -141,5 +155,10 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
     protected void onResume() {
         super.onResume();
         listUpdater();
+    }
+
+    @Override
+    public void searchCategory(String _listName) {
+
     }
 }
