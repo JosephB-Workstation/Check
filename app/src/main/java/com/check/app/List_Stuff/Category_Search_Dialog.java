@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
@@ -16,9 +17,12 @@ import androidx.fragment.app.DialogFragment;
 import com.check.app.Create_List_Dialog;
 import com.check.app.R;
 
+import java.util.ArrayList;
+
 public class Category_Search_Dialog extends DialogFragment {
     private Spinner categorySpinner;
     private SearchCategoryListener searchCategoryListener;
+    private ArrayList<String> categories;
 
     @NonNull
     @Override
@@ -26,6 +30,10 @@ public class Category_Search_Dialog extends DialogFragment {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity()); //custom layout
         LayoutInflater inflater = requireActivity().getLayoutInflater(); // inflater for custom layout
         View view = inflater.inflate(R.layout.dialog_category_sort, null); // view for the custom inflater, and setting the layout file.
+        if(getArguments() != null){
+        categories = getArguments().getStringArrayList("categories");}
+        categorySpinner = view.findViewById(R.id.categorySpinner);
+    //    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories);
         dialogBuilder.setView(view)
                 .setTitle("Select a category to filter in")
                 .setPositiveButton("Set filter", new DialogInterface.OnClickListener() {

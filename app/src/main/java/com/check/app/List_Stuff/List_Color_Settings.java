@@ -56,6 +56,8 @@ public class List_Color_Settings extends DialogFragment {
         colorSettingsListListener = (ColorSettingsListListener) context; //instantiate listener
     }
 
+
+
     public interface ColorSettingsListListener{
         void attachColorSettings(int colorId);//sends to List_Activity.
     }

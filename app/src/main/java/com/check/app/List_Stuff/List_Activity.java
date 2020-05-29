@@ -37,7 +37,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class List_Activity extends AppCompatActivity implements Create_Task_Dialog.CreateTaskListener, Edit_Task_Dialog.editTaskListener, List_Color_Settings.ColorSettingsListListener {
+public class List_Activity extends AppCompatActivity implements Create_Task_Dialog.CreateTaskListener, Edit_Task_Dialog.editTaskListener, List_Edit_Settings.ListEditListener, List_Color_Settings.ColorSettingsListListener {
     private RecyclerView lTasks; //First three variables are necessary for recycler view
     private RecyclerView.Adapter lTaskAdapter;
     private RecyclerView.LayoutManager lTaskLayoutManager;
@@ -84,6 +84,8 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
             setSupportActionBar(toolbar);
             backgroundColorId = intent.getDoubleExtra("listBackground", 0.0);
             attachColorSettings(backgroundColorId);
+            listCategory = intent.getStringExtra("listCategory");
+            listInfo.put("category", listCategory);
             listInfo.put("background", backgroundColorId);
             listInfo.put("name", listName);
             storagePointer = taskList.size();
@@ -93,7 +95,6 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         else if(intent.getIntExtra("mode", 1) == 1){ // if the list was created, instead of loaded.
         Toolbar toolbar = findViewById(R.id.listToolBar); // list toolbar grabbed
         listName = intent.getStringExtra("listName"); //grabs the name from MainActivity, which got it from the dialog
-        listCategory = intent.getStringExtra("listCategory");
         toolbar.setTitle(listName);// sets the local string variable to be the title of the toolbar.
         listInfo.put("name", listName);
         listInfo.put("category", listCategory);
@@ -118,8 +119,12 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
                 taskdialog.show(getSupportFragmentManager(), "Create Task");
                 return true;
             case R.id.listSettings:
-                List_Color_Settings colordialog = new List_Color_Settings(); // creates a dialog for changing the color (List_Color_Settings)
-                colordialog.show(getSupportFragmentManager(), "Change Color");
+                List_Edit_Settings editDialog = new List_Edit_Settings();
+                Bundle bundle = new Bundle();
+                bundle.putString("category", listCategory);
+                bundle.putDouble("colorId", backgroundColorId);
+                editDialog.setArguments(bundle);
+                editDialog.show(getSupportFragmentManager(), "Edit List");
                 return true;
             case R.id.listClear:
                 taskList.clear(); //clears the arraylist
@@ -223,18 +228,11 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
 
     }
 
-/*    @Override
-    public void attachListSettings(String category, double colorId) {
-        backgroundColorId = colorId;
-        if(colorId == 0) setBackground(R.drawable.background_yellow);
-        else if(colorId == 1) setBackground(R.drawable.background_blue);
-        else if(colorId == 2) setBackground(R.drawable.background_green);
-        else if(colorId == 3) setBackground(R.drawable.background_purple);
-        if(listInfo.containsKey("background")){listInfo.remove("background");}
-        listInfo.put("background", backgroundColorId);
+    @Override
+    public void attachListSettings(String category) {
         listCategory = category;
         if(listInfo.containsKey("category")){listInfo.remove("category");}
         listInfo.put("category", category);
-    }*/
+    }
 }
 

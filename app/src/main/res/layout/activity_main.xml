@@ -36,12 +36,14 @@
 
     </EditText>
 
-        <Button
-            android:layout_width="wrap_content"
+        <Spinner
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Category"
-            android:id="@+id/categoryButton">
-        </Button>
+            android:id="@+id/categorySelectSpinner"
+            android:layout_weight="20"
+            android:layout_gravity="center">
+
+        </Spinner>
 
     </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView

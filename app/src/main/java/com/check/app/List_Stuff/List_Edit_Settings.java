@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,10 +33,10 @@ public class List_Edit_Settings extends DialogFragment  implements List_Color_Se
         backgroundPicker =  view.findViewById(R.id.backgroundEditor);
         categorySelector = view.findViewById(R.id.categoryEditor);
 
+
         if(getArguments().containsKey("colorId")){
             colorId = getArguments().getDouble("colorId");
         } else {colorId = 0;}
-        colorTextUpdater(colorId);
 
         if(getArguments().containsKey("category")){
             category = getArguments().getString("category");
@@ -57,7 +58,7 @@ public class List_Edit_Settings extends DialogFragment  implements List_Color_Se
                         if(!categorySelector.getText().toString().trim().isEmpty()){
                             category = categorySelector.getText().toString();
                         }else{category = "None";}
-                        listEditListener.attachListSettings(category, colorId);
+                        listEditListener.attachListSettings(category);
 
                     }
                 })
@@ -76,20 +77,13 @@ public class List_Edit_Settings extends DialogFragment  implements List_Color_Se
     }
 
     public interface ListEditListener{
-        void attachListSettings(String category, double colorId);
+        void attachListSettings(String category);
     }
 
     @Override
     public void attachColorSettings(int colorId) {
         this.colorId = (double)colorId;
-        colorTextUpdater(this.colorId);
     }
 
-    private void colorTextUpdater(double colorId){
-        if(colorId == 0){backgroundPicker.setText("Background: Yellow");}
-        else if (colorId == 1) {backgroundPicker.setText("Background: Blue");}
-        else if (colorId == 2) {backgroundPicker.setText("Background: Green");}
-        else if(colorId == 3) {backgroundPicker.setText("Background: Purple");}
-    }
 }
 

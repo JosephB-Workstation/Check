@@ -15,16 +15,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        android:text="Background Settings"
+        android:text="Background Settings            "
+        android:padding="3dp"
         android:id="@+id/backgroundEditor">
 
     </Button>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Background: ">
-
-    </TextView>
-
 
 </LinearLayout>

@@ -15,8 +15,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.check.app.List_Stuff.Category_Search_Dialog;
 import com.check.app.List_Stuff.ListObject;
@@ -33,15 +36,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements Create_List_Dialog.CreateListListener, Category_Search_Dialog.SearchCategoryListener { //main logged in menu
+public class MainActivity extends AppCompatActivity implements Create_List_Dialog.CreateListListener, Category_Search_Dialog.SearchCategoryListener, AdapterView.OnItemSelectedListener { //main logged in menu
     private RecyclerView lLists; //First three variables are necessary for recycler view
     private TListAdapter lListAdapter;
     private RecyclerView.LayoutManager lListLayoutManager;
     private ArrayList<ListObject> listOfLists;
+    private ArrayList<ListObject> categoryFilteredLists;
     private ArrayList<String> categories;
     SharedPreferences pref;
     EditText searchBar;
     Button categoryButton;
+    Spinner categorySpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,21 +75,24 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
             }
         });
 
-        categoryButton = findViewById(R.id.categoryButton);
-        categoryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Category_Search_Dialog category_search_dialog = new Category_Search_Dialog();
-                category_search_dialog.show(getSupportFragmentManager(), "Category Search");
-            }
-        });
+        categories = new ArrayList<String>();
+        categoryFilteredLists = new ArrayList<ListObject>();
+
     }
     private void filter(String text){
         ArrayList<ListObject> filteredList = new ArrayList<>();
-
-        for(ListObject item : listOfLists){
-            if(item.getListName().toLowerCase().contains(text.toLowerCase())){
-                filteredList.add(item);
+        if(categoryFilteredLists.size() == 0) {
+            for (ListObject item : listOfLists) {
+                if (item.getListName().toLowerCase().contains(text.toLowerCase())) {
+                    filteredList.add(item);
+                }
+            }
+        }
+        else{
+            for(ListObject item : categoryFilteredLists){
+                if ((item.getListName().toLowerCase().contains(text.toLowerCase()))){
+                    filteredList.add(item);
+                }
             }
         }
         lListAdapter.filterList(filteredList);
@@ -132,13 +140,24 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
 
     private void listUpdater(){
         listOfLists.clear();
+        categories.clear();
+        categories.add("All");
         searchBar.getText().clear();
         Map<String, ?> allLists = pref.getAll();
         for(Map.Entry<String, ?> entry : allLists.entrySet()){
             String listKey = entry.getKey();
             mapGrabber(listKey);
         }
+
+        categorySpinner = findViewById(R.id.categorySelectSpinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        categorySpinner.setAdapter(adapter);
+        categorySpinner.setOnItemSelectedListener(this);
+
         lListAdapter.filterList(listOfLists);
+        if(categorySpinner != null){
+        categorySpinner.setSelection(0);}
     }
 
     private void mapGrabber(String listKey){
@@ -149,12 +168,44 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
         newMap = gson.fromJson(savedMap, type);
         ListObject newList = new ListObject(newMap);
         listOfLists.add(newList);
+        if(!(categories.contains(newList.getListCategory().toLowerCase())) && !(newList.getListCategory().equals("None"))){
+            categories.add(newList.getListCategory().toLowerCase());
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         listUpdater();
+    }
+
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Log.d("YOU", "DID THE THING");
+        String text = parent.getItemAtPosition(position).toString();
+        if (text.equals("All")){
+            lListAdapter.filterList(listOfLists);
+            if(categoryFilteredLists != null){
+            categoryFilteredLists.clear();}
+            searchBar.getText().clear();
+        }
+        else{
+            text = text.toLowerCase();
+            categoryFilteredLists.clear();
+            for(ListObject item : listOfLists){
+                if(item.getListCategory().toLowerCase().equals(text)){{
+                    categoryFilteredLists.add(item);
+                }}
+            }
+            lListAdapter.filterList(categoryFilteredLists);
+            searchBar.getText().clear();
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 
     @Override
