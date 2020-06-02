@@ -74,7 +74,7 @@ public class TaskObject implements Serializable {
             checkboxStateSource = R.drawable.islate;
         }
         dueTimer = null;
-        dueDate = null;
+        //dueDate = null;
     }
     public void setTaskName(String newName){
         taskName = newName;
@@ -112,7 +112,8 @@ public class TaskObject implements Serializable {
     }
     public void updateTimer(){
         dueTimer.cancel();
-        dueTimer.purge();
+        dueTimer = null;
+        dueDate = null;
     }
 
     public void importTimeCheck(){
@@ -126,5 +127,11 @@ public class TaskObject implements Serializable {
             };
             dueTimer.schedule(dueExecutor, dueDate.getTime());
         }
+    }
+    public boolean hasTimer(){
+        if(dueDate != null && dueTimer == null) {
+            dueDate = null;
+            return true;}
+        else return false;
     }
 }

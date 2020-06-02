@@ -73,7 +73,9 @@ public class Create_Task_Dialog extends DialogFragment implements DatePickerDial
         hour = c.get(Calendar.HOUR_OF_DAY);
         minute = c.get(Calendar.MINUTE);
         dayViewer.setText(new StringBuilder().append(this.month + 1).append("/").append(this.day).append("/").append(this.year).append(" "));
-        timeViewer.setText(new StringBuilder().append(this.hour).append(":").append(this.minute));
+
+        //String builder for time
+        TimeBuilder();
 
         mdueDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,13 +154,23 @@ public class Create_Task_Dialog extends DialogFragment implements DatePickerDial
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         this.hour = hourOfDay;
         this.minute = minute;
-        timeViewer.setText(new StringBuilder().append(this.hour).append(":").append(this.minute));
+        TimeBuilder();
     }
 
     public interface CreateTaskListener{
         void attachTaskSettings(String _taskName, String _taskDescription ); //interface function to deliver to list activity
         void attachTaskSettings(String _taskName, String _taskDescription, Calendar date); //interface function to deliver to list activity if a due date exists
 
+    }
+
+    private void TimeBuilder(){
+        StringBuilder timeBuilder = new StringBuilder();
+        if(this.hour < 10) timeBuilder.append("0");
+        timeBuilder.append(this.hour)
+                .append(":");
+        if(this.minute < 10) timeBuilder.append("0");
+        timeBuilder.append(this.minute);
+        timeViewer.setText(timeBuilder);
     }
 
 }

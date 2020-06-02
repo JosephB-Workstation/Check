@@ -6,8 +6,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.TaskInfo;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,6 +48,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
     private LinearLayout background; // a linear layout variable so I can change list backgrounds
     private int storagePointer;
     private double backgroundColorId;
+    private BroadcastReceiver minuteUpdateReciever;
     SharedPreferences pref;
     SharedPreferences.Editor editor;
     SharedPreferences pref2;
@@ -210,9 +213,26 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         background.setBackgroundResource(backgroundColor);
     }
 
+    public void startAutoUpdater(){
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_TIME_TICK);
+        minuteUpdateReciever = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                for(int i = 0; i < taskList.size(); i++){
+                    if(taskList.get(i).hasTimer()){lTaskAdapter.notifyItemChanged(i);}
+                }
+            }
+        };
+        registerReceiver(minuteUpdateReciever, intentFilter);
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
+
+        unregisterReceiver(minuteUpdateReciever);
+
         Gson gson = new Gson();
         gson.newBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
         String taskMapString = gson.toJson(listMap);
@@ -226,6 +246,11 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         editor.putString(listName, listSettings);
         editor.commit();
 
+    }
+
+    protected void onResume() {
+        super.onResume();
+        startAutoUpdater();
     }
 
     @Override

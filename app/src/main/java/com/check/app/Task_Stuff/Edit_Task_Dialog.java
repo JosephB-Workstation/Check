@@ -72,7 +72,7 @@ public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog
             hour = dueDate.get(dueDate.HOUR_OF_DAY);
             minute = dueDate.get(dueDate.MINUTE);
             dayViewer.setText(new StringBuilder().append(this.month +1).append("/").append(this.day).append("/").append(this.year).append(" "));
-            timeViewer.setText(new StringBuilder().append(this.hour).append(":").append(this.minute));
+            TimeBuilder();
 
         }else{
             attachDue = false;
@@ -85,7 +85,7 @@ public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog
             hour = defaultCalendar.get(defaultCalendar.HOUR_OF_DAY);
             minute = defaultCalendar.get(defaultCalendar.MINUTE);
             dayViewer.setText(new StringBuilder().append(this.month +1).append("/").append(this.day).append("/").append(this.year).append(" "));
-            timeViewer.setText(new StringBuilder().append(this.hour).append(":").append(this.minute));
+            TimeBuilder();
         }
 
 
@@ -168,12 +168,22 @@ public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         this.hour = hourOfDay;
         this.minute = minute;
-        timeViewer.setText(new StringBuilder().append(this.hour).append(":").append(this.minute));
+        TimeBuilder();
     }
 
     public interface editTaskListener{
         void attachUpdatedTaskSettings(String _taskName, String _taskDescription, int _position);//sends the dialog information and position information to the List_Activity
         void attachUpdatedTaskSettings(String _taskName, String _taskDescription, int _position, Calendar dueDate);
+    }
+
+    private void TimeBuilder(){
+        StringBuilder timeBuilder = new StringBuilder();
+        if(this.hour < 10) timeBuilder.append("0");
+        timeBuilder.append(this.hour)
+                .append(":");
+        if(this.minute < 10) timeBuilder.append("0");
+        timeBuilder.append(this.minute);
+        timeViewer.setText(timeBuilder);
     }
 
 }
