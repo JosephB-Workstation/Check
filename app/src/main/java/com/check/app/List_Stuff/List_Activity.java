@@ -5,14 +5,12 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.TaskInfo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,20 +22,11 @@ import com.check.app.Task_Stuff.Edit_Task_Dialog;
 import com.check.app.Task_Stuff.TaskAdapter;
 import com.check.app.Task_Stuff.TaskObject;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 public class List_Activity extends AppCompatActivity implements Create_Task_Dialog.CreateTaskListener, Edit_Task_Dialog.editTaskListener, List_Edit_Settings.ListEditListener, List_Color_Settings.ColorSettingsListListener {
     private RecyclerView lTasks; //First three variables are necessary for recycler view
@@ -70,6 +59,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         listMap = new HashMap<String, TaskObject>();
         String savedMap;
         taskListStarter();
+
         if(intent.getIntExtra("mode", 1) == 0) {
 
             listName = intent.getStringExtra("listName");
@@ -148,8 +138,18 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         listMap.put(Integer.toString((storagePointer -1)), taskList.get((storagePointer -1)));
     }
 
-    public void attachTaskSettings(String _taskName, String _taskDescription, Calendar date){
-        TaskObject newTask = new TaskObject(_taskName, _taskDescription, date);
+    @Override
+    public void attachTaskSettings(String _taskName, String _taskDescription, Calendar date, int taskTimerToggle){
+        TaskObject newTask = new TaskObject(_taskName, _taskDescription, date, taskTimerToggle);
+        taskList.add(newTask);//add to arraylist
+        lTaskAdapter.notifyDataSetChanged();//update recycler
+        storagePointer = taskList.size();
+        listMap.put(Integer.toString((storagePointer -1)), taskList.get((storagePointer -1)));
+    }
+
+    @Override
+    public void attachTaskSettings(String _taskName, String _taskDescription, Calendar date, int taskTimerToggle, int recursionTimerToggle) {
+        TaskObject newTask = new TaskObject(_taskName, _taskDescription, date, taskTimerToggle, recursionTimerToggle);
         taskList.add(newTask);//add to arraylist
         lTaskAdapter.notifyDataSetChanged();//update recycler
         storagePointer = taskList.size();
@@ -173,7 +173,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         taskList.get(_position).setTaskName(_taskName);
         taskList.get(_position).setTaskDescription(_taskDescription);
         if(taskList.get(_position).getTimerState()){
-            taskList.get(_position).updateTimer();
+            taskList.get(_position).updateDueTimer();
         }
         lTaskAdapter.notifyDataSetChanged();
         listMap.remove(Integer.toString(_position));
@@ -183,7 +183,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
     public void attachUpdatedTaskSettings(String _taskName, String _taskDescription, int _position, Calendar _dueDate){
         taskList.get(_position).setTaskName(_taskName);
         taskList.get(_position).setTaskDescription(_taskDescription);
-        taskList.get(_position).updateTimer(_dueDate);
+        taskList.get(_position).updateDueTimer(_dueDate);
         lTaskAdapter.notifyDataSetChanged();
         listMap.remove(Integer.toString(_position));
         listMap.put(Integer.toString(_position), taskList.get(_position));

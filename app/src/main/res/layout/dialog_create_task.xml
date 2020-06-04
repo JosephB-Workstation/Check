@@ -56,7 +56,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Task due: "
-        android:id="@+id/taskDue">
+        android:id="@+id/taskTimeMessage">
 
     </TextView>
 
@@ -67,7 +67,7 @@
         android:id = "@+id/dayView"
         android:layout_marginRight="5dp"
         android:layout_marginLeft="5dp"
-        android:layout_toRightOf="@id/taskDue">
+        android:layout_toRightOf="@id/taskTimeMessage">
     </TextView>
 
     <TextView
@@ -116,5 +116,13 @@
     </Button>
 
 </RelativeLayout>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:text="Recursion Rate"
+        android:id="@+id/recursionRateButton">
+
+    </Button>
 
 </LinearLayout>

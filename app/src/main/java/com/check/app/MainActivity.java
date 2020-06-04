@@ -182,7 +182,6 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Log.d("YOU", "DID THE THING");
         String text = parent.getItemAtPosition(position).toString();
         if (text.equals("All")){
             lListAdapter.filterList(listOfLists);
