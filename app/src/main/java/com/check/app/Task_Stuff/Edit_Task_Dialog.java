@@ -7,7 +7,6 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -23,17 +22,16 @@ import androidx.fragment.app.DialogFragment;
 
 import com.check.app.R;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener{
     private EditText taskNameEntry, taskDescriptionEntry;
     private editTaskListener taskListener;
-    private int position, year, month, day, hour, minute;
-    private Button mdueDate, mdueTime, mdueToggle;
-    private TextView dayViewer, timeViewer;
+    private int position, year, month, day, hour, minute, timerToggle, recursionToggle;
+    private Button mdueDate, mdueTime, mdueToggle, mrecursionChanger;
+    private TextView dayViewer, timeViewer, taskTimeMessage;
     private RelativeLayout dataholder;
-    private Boolean attachDue;
+    private Boolean attachCalendar;
     private Calendar dueDate, defaultCalendar;
 
     @NonNull
@@ -55,15 +53,21 @@ public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog
         mdueDate =  view.findViewById(R.id.dueDateButton);
         mdueTime = view.findViewById(R.id.dueTimeButton);
         mdueToggle = view.findViewById(R.id.dueToggleButton);
+        mrecursionChanger = view.findViewById(R.id.recursionRateButton);
 
         //due date Texts
         dayViewer = view.findViewById(R.id.dayView);
         timeViewer = view.findViewById(R.id.timeView);
+        taskTimeMessage = view.findViewById(R.id.taskTimeMessage);
 
         dataholder = view.findViewById(R.id.toggleDueView);
+
+        mrecursionChanger.setText("Recurs Daily");
+        recursionToggle = 1;
         if(getArguments().containsKey("calendar")) {
+            int timeCode = getArguments().getInt("timecode");
             dueDate = (Calendar) getArguments().getSerializable("calendar");
-            attachDue = true;
+            attachCalendar = true;
             dataholder.setVisibility(View.VISIBLE);
             mdueToggle.setText("Due Toggle: on");
             year = dueDate.get(dueDate.YEAR) ;
@@ -73,9 +77,43 @@ public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog
             minute = dueDate.get(dueDate.MINUTE);
             dayViewer.setText(new StringBuilder().append(this.month +1).append("/").append(this.day).append("/").append(this.year).append(" "));
             TimeBuilder();
+            if(timeCode == 1){
+                mrecursionChanger.setVisibility(View.INVISIBLE);
+                mrecursionChanger.setText("Recurs Daily");
+                timerToggle = 1;
+                recursionToggle = 1;
+                mdueToggle.setText("Due Toggle: on");
+            }
+            else if (timeCode == 2){
+                recursionToggle = getArguments().getInt("recursion");
+                switch (recursionToggle){
+                    case 0:
+                        mrecursionChanger.setText("Recurs Annually");
+                        break;
+                    case 1:
+                        mrecursionChanger.setText("Recurs Daily");
+                        break;
+                    case 2:
+                        mrecursionChanger.setText("Recurs Weekly");
+                        break;
+                    case 3:
+                        mrecursionChanger.setText("Recurs Bi-Weekly");
+                        break;
+                    case 4:
+                        mrecursionChanger.setText("Recurs Monthly");
+                        break;
+                    case 5:
+                        mrecursionChanger.setText("Recurs Quarterly");
+                        break;
+                }
+                timerToggle = 2;
+                mrecursionChanger.setVisibility(View.VISIBLE);
+                mdueToggle.setText("Recurring Task: on");
+                taskTimeMessage.setText("Recursion Date: ");
+            }
 
         }else{
-            attachDue = false;
+            attachCalendar = false;
             dataholder.setVisibility(View.INVISIBLE);
             mdueToggle.setText("Due Toggle: off");
             defaultCalendar = Calendar.getInstance();
@@ -86,6 +124,9 @@ public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog
             minute = defaultCalendar.get(defaultCalendar.MINUTE);
             dayViewer.setText(new StringBuilder().append(this.month +1).append("/").append(this.day).append("/").append(this.year).append(" "));
             TimeBuilder();
+            mdueToggle.setText("Timer Functions: off");
+            timerToggle = 0;
+            mrecursionChanger.setVisibility(View.INVISIBLE);
         }
 
 
@@ -108,19 +149,63 @@ public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog
         mdueToggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!attachDue){
-                    attachDue = true;
+                if(timerToggle == 0){
+                    attachCalendar = true;
+                    timerToggle++;
                     dataholder.setVisibility(View.VISIBLE);
+                    mrecursionChanger.setVisibility(View.INVISIBLE);
+                    taskTimeMessage.setText("Due Date: ");
                     mdueToggle.setText("Due Toggle: on");
                 }
+                else if (timerToggle == 1){
+                    timerToggle++;
+                    dataholder.setVisibility(View.VISIBLE);
+                    mrecursionChanger.setVisibility(View.VISIBLE);
+                    taskTimeMessage.setText("Recursion Date: ");
+                    mdueToggle.setText("Recurring Task: on");
+
+                }
                 else{
-                    attachDue = false;
+                    attachCalendar = false;
+                    timerToggle = 0;
+                    mrecursionChanger.setVisibility(View.INVISIBLE);
                     dataholder.setVisibility(View.INVISIBLE);
-                    mdueToggle.setText("Due Toggle: off");
+                    mdueToggle.setText("Timer Functions: off");
                 }
             }
         });
-        String title = ("Editing " + getArguments().get("taskName") + ":"); // editing <task name>:
+        mrecursionChanger.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch(recursionToggle){
+                    case 0: // this does mean that annual is label 0, daily is 1, etc.
+                        recursionToggle++;
+                        mrecursionChanger.setText("Recurs Daily");
+                        break;
+                    case 1:
+                        recursionToggle++;
+                        mrecursionChanger.setText("Recurs Weekly");
+                        break;
+                    case 2:
+                        recursionToggle++;
+                        mrecursionChanger.setText("Recurs Bi-Weekly");
+                        break;
+                    case 3:
+                        recursionToggle++;
+                        mrecursionChanger.setText("Recurs Monthly");
+                        break;
+                    case 4:
+                        recursionToggle++;
+                        mrecursionChanger.setText("Recurs Quarterly");
+                        break;
+                    case 5:
+                        recursionToggle = 0;
+                        mrecursionChanger.setText("Recurs Annually");
+                        break;
+                }
+            }
+        });
+        String title = ("Editing " + taskNameEntry.getText().toString() + ":"); // editing <task name>:
 
         dialogBuilder.setView(view)
                 .setTitle(title)
@@ -130,13 +215,16 @@ public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog
                             if (!taskNameEntry.getText().toString().trim().isEmpty()) {
                                 String taskName = taskNameEntry.getText().toString();
                                 String taskDescription = taskDescriptionEntry.getText().toString();
-                                if(!attachDue)
-                                taskListener.attachUpdatedTaskSettings(taskName,  taskDescription, position); //puts position into the mix so we can edit the entry directly/
+                                if(!attachCalendar)
+                                taskListener.attachUpdatedTaskSettings(taskName,  taskDescription, position, timerToggle); //puts position into the mix so we can edit the entry directly/
                                 else{
                                     if(dueDate == null){
                                     dueDate = defaultCalendar;}
                                     dueDate.set(year, month, day, hour, minute);
-                                    taskListener.attachUpdatedTaskSettings(taskName, taskDescription, position, dueDate);
+                                    if(timerToggle == 1){
+                                    taskListener.attachUpdatedTaskSettings(taskName, taskDescription, position, dueDate, timerToggle);}
+                                    else if (timerToggle == 2){
+                                        taskListener.attachUpdatedTaskSettings(taskName, taskDescription, position, dueDate, timerToggle, recursionToggle); }
                                 }
                             }
                     }
@@ -172,8 +260,9 @@ public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog
     }
 
     public interface editTaskListener{
-        void attachUpdatedTaskSettings(String _taskName, String _taskDescription, int _position);//sends the dialog information and position information to the List_Activity
-        void attachUpdatedTaskSettings(String _taskName, String _taskDescription, int _position, Calendar dueDate);
+        void attachUpdatedTaskSettings(String _taskName, String _taskDescription, int _position, int timerToggle);//sends the dialog information and position information to the List_Activity
+        void attachUpdatedTaskSettings(String _taskName, String _taskDescription, int _position, Calendar dueDate, int timerToggle);
+        void attachUpdatedTaskSettings(String _taskName, String _taskDescription, int _position, Calendar dueDate, int timerToggle, int recursionToggle);
     }
 
     private void TimeBuilder(){

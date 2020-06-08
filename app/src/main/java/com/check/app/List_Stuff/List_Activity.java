@@ -169,10 +169,10 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
     }
 
     @Override
-    public void attachUpdatedTaskSettings(String _taskName, String _taskDescription, int _position) { // Listener that updates a task at a specific position in the arraylist with new information, such as name and description. (Dialog created in TaskAdapter, dialog is Edit_Task_Dialog)
+    public void attachUpdatedTaskSettings(String _taskName, String _taskDescription, int _position, int timerToggle) { // Listener that updates a task at a specific position in the arraylist with new information, such as name and description. (Dialog created in TaskAdapter, dialog is Edit_Task_Dialog)
         taskList.get(_position).setTaskName(_taskName);
         taskList.get(_position).setTaskDescription(_taskDescription);
-        if(taskList.get(_position).getTimerState()){
+        if(taskList.get(_position).getTimerState() != 0){
             taskList.get(_position).updateDueTimer();
         }
         lTaskAdapter.notifyDataSetChanged();
@@ -180,10 +180,21 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         listMap.put(Integer.toString(_position), taskList.get(_position));
     }
 
-    public void attachUpdatedTaskSettings(String _taskName, String _taskDescription, int _position, Calendar _dueDate){
+    public void attachUpdatedTaskSettings(String _taskName, String _taskDescription, int _position, Calendar _dueDate, int timerToggle){
         taskList.get(_position).setTaskName(_taskName);
         taskList.get(_position).setTaskDescription(_taskDescription);
-        taskList.get(_position).updateDueTimer(_dueDate);
+        taskList.get(_position).updateDueTimer(_dueDate, timerToggle);
+        lTaskAdapter.notifyDataSetChanged();
+        listMap.remove(Integer.toString(_position));
+        listMap.put(Integer.toString(_position), taskList.get(_position));
+    }
+
+    @Override
+    public void attachUpdatedTaskSettings(String _taskName, String _taskDescription, int _position, Calendar _dueDate, int timerToggle, int recursionToggle) {
+        taskList.get(_position).setTaskName(_taskName);
+        taskList.get(_position).setTaskDescription(_taskDescription);
+        taskList.get(_position).setRecursionCode(recursionToggle);
+        taskList.get(_position).updateDueTimer(_dueDate, timerToggle);
         lTaskAdapter.notifyDataSetChanged();
         listMap.remove(Integer.toString(_position));
         listMap.put(Integer.toString(_position), taskList.get(_position));

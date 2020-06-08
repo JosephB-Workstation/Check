@@ -138,7 +138,7 @@ public class Create_Task_Dialog extends DialogFragment implements DatePickerDial
                         break;
                     case 3:
                         recursionToggle++;
-                        mrecursionChanger.setText("Recurs Monthy");
+                        mrecursionChanger.setText("Recurs Monthly");
                         break;
                     case 4:
                         recursionToggle++;

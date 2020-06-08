@@ -60,11 +60,18 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHo
                 String taskName = taskList.get(position).getTaskName(); //gets task name for package
                 String taskDescription = taskList.get(position).getTaskDescription(); // gets task description for package
                 int arraypos = position; // gets array position for package
-                if(taskList.get(position).getTimerState()){ // if there is a due date
+                if(taskList.get(position).getTimerState() == 1){ // if there is a due date
                     Calendar dueDate = taskList.get(position).getCalendar(); //grab it's calendar
+                    int timeCode = 1;
                     openDialogFragment(taskName, taskDescription, arraypos, dueDate); //send it to opendialogfragment
-                }else
-                openDialogFragment(taskName, taskDescription, arraypos); // sends off to a new function
+                }else if(taskList.get(position).getTimerState() == 2){
+                    Calendar dueDate = taskList.get(position).getCalendar(); //grab it's calendar
+                    int recursionCode = taskList.get(position).getRecursionCode();
+                    int timeCode = 2;
+                    openDialogFragment(taskName, taskDescription, arraypos, dueDate, recursionCode); //send it to opendialogfragment
+
+                }
+                else openDialogFragment(taskName, taskDescription, arraypos); // sends off to a new function
             }
         });
     }
@@ -74,6 +81,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHo
         deliverTask.putString("taskName", _taskName);
         deliverTask.putString("taskDescription", _taskDescription);
         deliverTask.putInt("position", _arraypos);
+        deliverTask.putInt("timecode", 1);
         deliverTask.putSerializable("calendar", calendar);
         Edit_Task_Dialog editTask = new Edit_Task_Dialog();
         editTask.setArguments(deliverTask);
@@ -85,6 +93,19 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHo
         deliverTask.putString("taskName", _taskName);
         deliverTask.putString("taskDescription", _taskDescription);
         deliverTask.putInt("position", _arraypos);
+        Edit_Task_Dialog editTask = new Edit_Task_Dialog();
+        editTask.setArguments(deliverTask);
+        editTask.show(fm, "editTask");
+    }
+
+    private void openDialogFragment(String _taskName, String _taskDescription, int _arraypos, Calendar calendar, int recursionCode){
+        Bundle deliverTask = new Bundle(); //creates a new bundle, stores all the necessary info for editing, sends to Edit_Task_Dialog
+        deliverTask.putString("taskName", _taskName);
+        deliverTask.putString("taskDescription", _taskDescription);
+        deliverTask.putInt("position", _arraypos);
+        deliverTask.putInt("recursion", recursionCode);
+        deliverTask.putInt("timecode", 2);
+        deliverTask.putSerializable("calendar", calendar);
         Edit_Task_Dialog editTask = new Edit_Task_Dialog();
         editTask.setArguments(deliverTask);
         editTask.show(fm, "editTask");

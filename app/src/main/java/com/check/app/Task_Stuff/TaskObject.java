@@ -80,11 +80,17 @@ public class TaskObject implements Serializable {
         return taskDescription;
     }
 
+    public int getRecursionCode(){
+        return recursionCode;
+    }
+
     public int getcheckboxState(){return checkboxState;}
-    public boolean getTimerState(){
-        if (dueTimer != null){
-            return true;
-        } else return false;
+    public int getTimerState(){
+        if (timerState == 1){
+            return 1;
+        }
+        else if(timerState == 2){return 2;}
+        else return 0;
     }
 
     public Calendar getCalendar(){
@@ -110,6 +116,7 @@ public class TaskObject implements Serializable {
             checkboxStateSource = R.drawable.islate;
         }
         dueTimer = null;
+        timerState = 0;
     }
 
     public void setRecursionCheckBoxState(){
@@ -117,6 +124,12 @@ public class TaskObject implements Serializable {
             checkboxState = 0;
             checkboxStateSource = R.drawable.notchecked;
         }
+        year = dueDate.get(dueDate.YEAR) ;
+        month = dueDate.get(dueDate.MONTH);
+        day = dueDate.get(dueDate.DAY_OF_MONTH);
+        hour = dueDate.get(dueDate.HOUR_OF_DAY);
+        minute = dueDate.get(dueDate.MINUTE);
+
         switch (recursionCode){
             case 0: // this does mean that annual is label 0, daily is 1, etc.
                 year++;
@@ -164,34 +177,62 @@ public class TaskObject implements Serializable {
         taskDescription = newDescription;
     }
 
+    public void setRecursionCode(int newcode){
+        recursionCode = newcode;
+    }
 
-    public void updateDueTimer(Calendar _calendar){
+
+    public void updateDueTimer(Calendar _calendar, int _timerState){
                 dueDate = _calendar;
                 dueDate.set(_calendar.get(_calendar.YEAR), _calendar.get(_calendar.MONTH), _calendar.get(_calendar.DAY_OF_MONTH), _calendar.get(_calendar.HOUR_OF_DAY), _calendar.get(_calendar.MINUTE));
-                if (getTimerState()) {
-                    dueTimer.cancel();
-                    dueTimer = new Timer();
-                    TimerTask dueExecutor = new TimerTask() {
-                        @Override
-                        public void run() {
-                            setLateCheckBoxState();
-                        }
-                    };
-                    dueTimer.schedule(dueExecutor, dueDate.getTime());
+        if(timerState == 0) {
+            if (_timerState == 1) {
+                dueTimer = new Timer();
+                TimerTask dueExecutor = new TimerTask() {
+                    @Override
+                    public void run() { setLateCheckBoxState(); }};
+                dueTimer.schedule(dueExecutor, dueDate.getTime());
 
-                }
-                else{
-                    dueTimer = new Timer();
-                    TimerTask dueExecutor = new TimerTask() {
-                        @Override
-                        public void run() {
-                            setLateCheckBoxState();
-                        }
-                    };
-                    dueTimer.schedule(dueExecutor, dueDate.getTime());
-                }
+            } else if (_timerState == 2){
+                dueTimer = new Timer();
+                TimerTask dueExecutor = new TimerTask() {
+                    @Override
+                    public void run() { setRecursionCheckBoxState(); }};
+                dueTimer.schedule(dueExecutor, dueDate.getTime());
+            }
+        }
+        else if(timerState == 1 || timerState == 2){
+            if(_timerState == 0){
+                dueTimer.cancel();
+                dueTimer = null;
+                dueDate = null;
+            }
+            else if(_timerState == 1){
+                dueTimer.cancel();
+                dueTimer = new Timer();
+                TimerTask dueExecutor = new TimerTask() {
+                    @Override
+                    public void run() {
+                        setLateCheckBoxState();
+                    }
+                };
+                dueTimer.schedule(dueExecutor, dueDate.getTime());
+            }
+            else if(_timerState == 2){
+                dueTimer.cancel();
+                dueTimer = new Timer();
+                TimerTask dueExecutor = new TimerTask() {
+                    @Override
+                    public void run() { setRecursionCheckBoxState(); }
+                };
+                dueTimer.schedule(dueExecutor, dueDate.getTime());
+            }
+        }
+        timerState = _timerState;
     }
     public void updateDueTimer(){
+        timerState = 0;
+        recursionCode = 0;
         dueTimer.cancel();
         dueTimer = null;
         dueDate = null;
