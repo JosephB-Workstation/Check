@@ -26,6 +26,11 @@ import com.check.app.List_Stuff.ListObject;
 import com.check.app.List_Stuff.List_Activity;
 import com.check.app.List_Stuff.TListAdapter;
 import com.check.app.Task_Stuff.TaskAdapter;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -45,8 +50,8 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
     private ArrayList<String> categories;
     SharedPreferences pref;
     EditText searchBar;
-    Button categoryButton;
     Spinner categorySpinner;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
         setSupportActionBar(toolbar);
         ListStarter();
         searchBar = findViewById(R.id.searchBar);
+
 
 
         searchBar.addTextChangedListener(new TextWatcher() {
@@ -112,7 +118,17 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
                 list_dialog.show(getSupportFragmentManager(), "Create List");
                 return true;
             case R.id.logOut:
-                //code here for logging out when  firebase support is added
+                FirebaseAuth.getInstance().signOut();
+                GoogleSignInAccount acc = GoogleSignIn.getLastSignedInAccount(this);
+                GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken(getString(R.string.default_web_client_id))
+                        .requestEmail()
+                        .build();
+                GoogleSignIn.getClient(this, gso).signOut();
+                Intent intent = new Intent(getApplicationContext(), Login_Activity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                finish();
                 return true;
             default://if this ever gets run, something has gone wrong.
                 return super.onOptionsItemSelected(item);
@@ -168,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
         newMap = gson.fromJson(savedMap, type);
         ListObject newList = new ListObject(newMap);
         listOfLists.add(newList);
-        if(!(categories.contains(newList.getListCategory().toLowerCase())) && !(newList.getListCategory().equals("None"))){
+        if(!(categories.contains(newList.getListCategory().toLowerCase())) && !(newList.getListCategory().equals("None") && !(newList.getListCategory().equals("All")))){
             categories.add(newList.getListCategory().toLowerCase());
         }
     }
