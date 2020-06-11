@@ -7,6 +7,7 @@ public class ListObject {
     private String listName, listCategory;
     private int listSize;
     private double listBackgroundId;
+    private String listID;
 
     public ListObject(HashMap<String, Object> _data){
         listData = _data;
@@ -18,6 +19,7 @@ public class ListObject {
         }else{
             listCategory = "None";
         }
+        listID = (String) listData.get("ID");
     }
 
     public String getListName(){
@@ -28,6 +30,8 @@ public class ListObject {
     }
     public double getListBackgroundId() {return listBackgroundId;}
     public String getListCategory(){return listCategory;}
+    public String getListID(){if (listID != null) return listID; else return "none"; }
+
 
 }
 
