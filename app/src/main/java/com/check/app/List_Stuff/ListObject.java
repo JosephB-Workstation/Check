@@ -19,7 +19,11 @@ public class ListObject {
         }else{
             listCategory = "None";
         }
-        listID = (String) listData.get("ID");
+        if (listData.containsKey("ID")){
+        listID = (String) listData.get("ID");}
+        else{
+            listID = "none";
+        }
     }
 
     public String getListName(){

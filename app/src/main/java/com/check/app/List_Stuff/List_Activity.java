@@ -1,5 +1,7 @@
 package com.check.app.List_Stuff;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,18 +23,26 @@ import com.check.app.Task_Stuff.Create_Task_Dialog;
 import com.check.app.Task_Stuff.Edit_Task_Dialog;
 import com.check.app.Task_Stuff.TaskAdapter;
 import com.check.app.Task_Stuff.TaskObject;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Map;
 
 public class List_Activity extends AppCompatActivity implements Create_Task_Dialog.CreateTaskListener, Edit_Task_Dialog.editTaskListener, List_Edit_Settings.ListEditListener, List_Color_Settings.ColorSettingsListListener {
     private RecyclerView lTasks; //First three variables are necessary for recycler view
     private RecyclerView.Adapter lTaskAdapter;
     private RecyclerView.LayoutManager lTaskLayoutManager;
-    private String listName, listCategory; // A string to store the list's name
+    private String listName, listCategory, listID; // A string to store the list's name
     private ArrayList<TaskObject> taskList; // An arraylist to store tasks
     private LinearLayout background; // a linear layout variable so I can change list backgrounds
     private int storagePointer;
@@ -42,8 +52,8 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
     SharedPreferences.Editor editor;
     SharedPreferences pref2;
     SharedPreferences.Editor editor2;
-    HashMap<String, TaskObject> listMap;
-    HashMap<String, Object> listInfo;
+    private HashMap<String, TaskObject> listMap;
+    private HashMap<String, Object> listInfo;
 
 
     @Override
@@ -60,18 +70,60 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         String savedMap;
         taskListStarter();
 
+
+
         if(intent.getIntExtra("mode", 1) == 0) {
+            listID = intent.getStringExtra("listID");
+            if (listID.equals("none")) {
+                listID = FirebaseDatabase.getInstance().getReference().child("user").child(FirebaseAuth.getInstance().getUid()).child("list").push().getKey();
+            }
 
             listName = intent.getStringExtra("listName");
             Gson gson = new Gson();
             gson.newBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
+
+            if(pref2.contains(listName)){ // if the list is saved locally
             savedMap = pref2.getString(listName, "");
             java.lang.reflect.Type type = new TypeToken<HashMap<String, TaskObject>>(){}.getType();
             listMap = gson.fromJson(savedMap, type);
             for(int i = 0; i < (listMap.size()); i++){
                 taskList.add(listMap.get(Integer.toString(i)));
                 taskList.get(i).importTimeCheck();
-            }
+            }}/*else { // if load is online only at the moment
+                final Map downloadedMap = new HashMap<>();
+
+                DatabaseReference mUserListDB = FirebaseDatabase.getInstance().getReference().child("user").child(FirebaseAuth.getInstance().getUid()).child("data");
+                mUserListDB.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) { // handling online loads
+                        if(dataSnapshot.exists()){
+                            for(DataSnapshot childSnapshot:dataSnapshot.getChildren()){
+                                if(listID == childSnapshot.getKey()) { // checks if the list already exists offline and is loaded already. Supposed to skip if it exists.
+                                    String mapString = (String) childSnapshot.getValue(); // should grab the map string?
+                                    downloadedMap.put("stringMap", (String) childSnapshot.getValue());
+                                }
+                                else continue;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
+                savedMap = (String) downloadedMap.get("stringMap");
+                java.lang.reflect.Type type = new TypeToken<HashMap<String, TaskObject>>() {}.getType();
+                listMap = gson.fromJson(savedMap, type);
+                for (int i = 0; i < (listMap.size()); i++) {
+                    taskList.add(listMap.get(Integer.toString(i)));
+                    taskList.get(i).importTimeCheck();
+                }
+            }*/
+
+
             Toolbar toolbar = findViewById(R.id.listToolBar); // list toolbar grabbed
             toolbar.setTitle(listName);// sets the local string variable to be the title of the toolbar.
             setSupportActionBar(toolbar);
@@ -81,16 +133,19 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
             listInfo.put("category", listCategory);
             listInfo.put("background", backgroundColorId);
             listInfo.put("name", listName);
+            listInfo.put("ID", listID);
             storagePointer = taskList.size();
             lTaskAdapter.notifyDataSetChanged();
         }
 
         else if(intent.getIntExtra("mode", 1) == 1){ // if the list was created, instead of loaded.
+            listID = FirebaseDatabase.getInstance().getReference().child("user").child(FirebaseAuth.getInstance().getUid()).child("list").push().getKey();
         Toolbar toolbar = findViewById(R.id.listToolBar); // list toolbar grabbed
         listName = intent.getStringExtra("listName"); //grabs the name from MainActivity, which got it from the dialog
         toolbar.setTitle(listName);// sets the local string variable to be the title of the toolbar.
         listInfo.put("name", listName);
         listInfo.put("category", listCategory);
+        listInfo.put("ID", listID);
         setSupportActionBar(toolbar);
         backgroundColorId = 0;
         attachColorSettings(backgroundColorId);
@@ -244,18 +299,23 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
 
         unregisterReceiver(minuteUpdateReciever);
 
+        DatabaseReference listDb = FirebaseDatabase.getInstance().getReference().child("user").child(FirebaseAuth.getInstance().getUid()).child("list").child(listID);
+        DatabaseReference dataDb = FirebaseDatabase.getInstance().getReference().child("user").child(FirebaseAuth.getInstance().getUid()).child("data").child(listID);
+
         Gson gson = new Gson();
         gson.newBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
-        String taskMapString = gson.toJson(listMap);
 
+        String taskMapString = gson.toJson(listMap);
         if(pref2.contains(listName)){editor2.remove(listName);}
         editor2.putString(listName, taskMapString);
         editor2.commit();
+        dataDb.setValue(taskMapString);
 
         String listSettings = gson.toJson(listInfo);
         if(pref.contains(listName)){editor.remove(listName);}
         editor.putString(listName, listSettings);
         editor.commit();
+        listDb.setValue(listSettings);
 
     }
 

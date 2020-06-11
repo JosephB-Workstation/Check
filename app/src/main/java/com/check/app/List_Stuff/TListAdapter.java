@@ -49,6 +49,7 @@ public class TListAdapter extends RecyclerView.Adapter<TListAdapter.ListViewHold
                 intent.putExtra("mode", 0);
                 intent.putExtra("listBackground", listOfLists.get(position).getListBackgroundId());
                 intent.putExtra("listCategory", listOfLists.get(position).getListCategory());
+                intent.putExtra("listID", listOfLists.get(position).getListID());
                 v.getContext().startActivity(intent);
             }
         });

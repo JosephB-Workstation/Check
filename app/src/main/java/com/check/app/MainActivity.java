@@ -166,6 +166,7 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
 
     private void listUpdater(){
         listOfLists.clear(); //clears all lists incase of adding of lists
+        listIDs.clear();
         categories.clear(); // clears all categories incase of removal or addition of categories.
         categories.add("All"); // adds the all category
         searchBar.getText().clear(); // clears search bar after you return to the main screen
@@ -176,10 +177,9 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
         }
 
         DatabaseReference mUserListDB = FirebaseDatabase.getInstance().getReference().child("user").child(FirebaseAuth.getInstance().getUid()).child("list");
-
         mUserListDB.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) { // handling online stuff lists
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) { // handling online loads
                 if(dataSnapshot.exists()){
                     for(DataSnapshot childSnapshot:dataSnapshot.getChildren()){
                         if(!listIDs.contains(childSnapshot.getKey())) { // checks if the list already exists offline and is loaded already. Supposed to skip if it exists.
@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
 
             }
         });
-
+        lListAdapter.notifyDataSetChanged();
         categorySpinner = findViewById(R.id.categorySelectSpinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
         categorySpinner.setSelection(0);}
     }
 
-    private void mapGrabber(String listKey){
+    private void mapGrabber(String listKey){ // offline load
         HashMap<String, Object> newMap = new HashMap<String, Object>();  // makes a new hashmap for the list of lists
         Gson gson = new Gson();
         String savedMap = pref.getString(listKey, "uhoh"); // gets the gson string for each list of lists
