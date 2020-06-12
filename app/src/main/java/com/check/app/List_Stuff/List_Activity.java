@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -79,49 +80,67 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
             }
 
             listName = intent.getStringExtra("listName");
-            Gson gson = new Gson();
-            gson.newBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
+
 
             if(pref2.contains(listName)){ // if the list is saved locally
             savedMap = pref2.getString(listName, "");
-            java.lang.reflect.Type type = new TypeToken<HashMap<String, TaskObject>>(){}.getType();
-            listMap = gson.fromJson(savedMap, type);
-            for(int i = 0; i < (listMap.size()); i++){
-                taskList.add(listMap.get(Integer.toString(i)));
-                taskList.get(i).importTimeCheck();
-            }}/*else { // if load is online only at the moment
+            listLoader(savedMap);
+            } else { // if load is online only at the moment
                 final Map downloadedMap = new HashMap<>();
 
                 DatabaseReference mUserListDB = FirebaseDatabase.getInstance().getReference().child("user").child(FirebaseAuth.getInstance().getUid()).child("data");
-                mUserListDB.addValueEventListener(new ValueEventListener() {
+                readData(mUserListDB, new OnGetDataListener(){
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) { // handling online loads
-                        if(dataSnapshot.exists()){
-                            for(DataSnapshot childSnapshot:dataSnapshot.getChildren()){
-                                if(listID == childSnapshot.getKey()) { // checks if the list already exists offline and is loaded already. Supposed to skip if it exists.
+                    public void onSuccess(DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.exists()) {
+                            for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+
+                                if (listID.equals(childSnapshot.getKey())) { // checks if the list already exists offline and is loaded already. Supposed to skip if it exists.
+
+                                    Log.d("Online load status", "Do you see me now?");
                                     String mapString = (String) childSnapshot.getValue(); // should grab the map string?
                                     downloadedMap.put("stringMap", (String) childSnapshot.getValue());
-                                }
-                                else continue;
+                                    listLoader((String) downloadedMap.get("stringMap"));
+                                    Log.d("Online load status", "SUCCESS??");
+
+                                } else continue;
                             }
+                            lTaskAdapter.notifyDataSetChanged();
                         }
                     }
 
                     @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    public void onStart() {
+                        Log.d("Online load status", "Your request hasn't been ignored! Hurray! Loading!");
+                    }
 
+                    @Override
+                    public void onFailure() {
+                        Log.d("Online load status", "FAILED");
                     }
                 });
+//                mUserListDB.addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) { // handling online loads
+//                        if(dataSnapshot.exists()){
+//                            for(DataSnapshot childSnapshot:dataSnapshot.getChildren()){
+//                                if(listID == childSnapshot.getKey()) { // checks if the list already exists offline and is loaded already. Supposed to skip if it exists.
+//                                    String mapString = (String) childSnapshot.getValue(); // should grab the map string?
+//                                    downloadedMap.put("stringMap", (String) childSnapshot.getValue());
+//                                }
+//                                else continue;
+//                            }
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//
+//                });
 
-
-                savedMap = (String) downloadedMap.get("stringMap");
-                java.lang.reflect.Type type = new TypeToken<HashMap<String, TaskObject>>() {}.getType();
-                listMap = gson.fromJson(savedMap, type);
-                for (int i = 0; i < (listMap.size()); i++) {
-                    taskList.add(listMap.get(Integer.toString(i)));
-                    taskList.get(i).importTimeCheck();
-                }
-            }*/
+            }
 
 
             Toolbar toolbar = findViewById(R.id.listToolBar); // list toolbar grabbed
@@ -151,6 +170,17 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         attachColorSettings(backgroundColorId);
         taskListStarter(); // function to start the recycler view
         storagePointer = taskList.size();}
+    }
+
+    private void listLoader(String savedMap){
+        Gson gson = new Gson();
+        gson.newBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
+        java.lang.reflect.Type type = new TypeToken<HashMap<String, TaskObject>>() {}.getType();
+        listMap = gson.fromJson(savedMap, type);
+        for (int i = 0; i < (listMap.size()); i++) {
+            taskList.add(listMap.get(Integer.toString(i)));
+            taskList.get(i).importTimeCheck();
+        }
     }
 
     public boolean onCreateOptionsMenu(Menu menu) { // makes toolbar options
@@ -329,6 +359,27 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         listCategory = category;
         if(listInfo.containsKey("category")){listInfo.remove("category");}
         listInfo.put("category", category);
+    }
+
+    private void readData(DatabaseReference ref, final OnGetDataListener listener){
+        listener.onStart();
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                listener.onSuccess(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                listener.onFailure();
+            }
+        });
+    }
+
+    public interface OnGetDataListener {
+        void onSuccess(DataSnapshot dataSnapshot);
+        void onStart();
+        void onFailure();
     }
 }
 
