@@ -22,7 +22,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.check.app.List_Stuff.Category_Search_Dialog;
 import com.check.app.List_Stuff.ListObject;
 import com.check.app.List_Stuff.List_Activity;
 import com.check.app.List_Stuff.TListAdapter;
@@ -48,7 +47,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements Create_List_Dialog.CreateListListener, Category_Search_Dialog.SearchCategoryListener, AdapterView.OnItemSelectedListener { //main logged in menu
+public class MainActivity extends AppCompatActivity implements Create_List_Dialog.CreateListListener, AdapterView.OnItemSelectedListener { //main logged in menu
     private RecyclerView lLists; //First three variables are necessary for recycler view
     private TListAdapter lListAdapter;
     private RecyclerView.LayoutManager lListLayoutManager;
@@ -71,12 +70,12 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
         Toolbar toolbar = findViewById(R.id.mainToolBar); //generates toolbar for mainmenu
         pref = getApplicationContext().getSharedPreferences("Check", 0);
         setSupportActionBar(toolbar);
-        ListStarter();
+        ListStarter(); // function to initiate the main menu list
         searchBar = findViewById(R.id.searchBar);
 
 
 
-        searchBar.addTextChangedListener(new TextWatcher() {
+        searchBar.addTextChangedListener(new TextWatcher() { //search bar text listener
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -86,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
 
             } // unused
             @Override
-            public void afterTextChanged(Editable s) {
+            public void afterTextChanged(Editable s) { // after the text has been edited
                 filter(s.toString());
             } // uses filter function. See below.
         });
@@ -95,6 +94,8 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
         categoryFilteredLists = new ArrayList<ListObject>(); // filter by category
 
     }
+
+
     private void filter(String text){ // makes a new list of lists to filter with, containing any list that has the text input match
         ArrayList<ListObject> filteredList = new ArrayList<>();
         if(categoryFilteredLists.size() == 0) { // if the categories are not influencing the list (aka is 0) then it will filter out from the entire list of lists
@@ -111,22 +112,24 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
                 }
             }
         }
-        lListAdapter.filterList(filteredList);
-
+        lListAdapter.filterList(filteredList); // tells the adapter to just look at these
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu){ //activates toolbar menu
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.mainactivity_menu, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item){ // switch case for the toolbar menu
         switch (item.getItemId()){
             case R.id.addList://creates a new list
                 Create_List_Dialog list_dialog = new Create_List_Dialog();
-                list_dialog.show(getSupportFragmentManager(), "Create List");
+                list_dialog.show(getSupportFragmentManager(), "Create List"); //create list dialog generated
                 return true;
+
             case R.id.logOut:
                 FirebaseAuth.getInstance().signOut(); //firebase log out
                 GoogleSignInAccount acc = GoogleSignIn.getLastSignedInAccount(this);// large chunk seemingly necessary for google logout
@@ -135,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
                         .requestEmail()
                         .build();
                 GoogleSignIn.getClient(this, gso).signOut();
-                Intent intent = new Intent(getApplicationContext(), Login_Activity.class);
+                Intent intent = new Intent(getApplicationContext(), Login_Activity.class); // send the logged out user back to the login screen
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 finish();
@@ -153,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
         startActivity(listIntent); // starts list activity with the packaged intent. (List_Activity)
     }
 
-    private void ListStarter(){
+    private void ListStarter(){ // starts recycler view.
         listOfLists = new ArrayList<>();//init arraylist
         lLists = findViewById(R.id.listOfLists); //recycler view pairing
         lLists.setNestedScrollingEnabled(false); // removes scary scroll wheel
@@ -166,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
 
     private void listUpdater(){
         listOfLists.clear(); //clears all lists incase of adding of lists
-        listIDs.clear();
+        listIDs.clear(); // clears list of active ids
         categories.clear(); // clears all categories incase of removal or addition of categories.
         categories.add("All"); // adds the all category
         searchBar.getText().clear(); // clears search bar after you return to the main screen
@@ -177,42 +180,41 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
         }
 
         DatabaseReference mUserListDB = FirebaseDatabase.getInstance().getReference().child("user").child(FirebaseAuth.getInstance().getUid()).child("list");
-        mUserListDB.addValueEventListener(new ValueEventListener() {
+
+        readData(mUserListDB, new OnGetDataListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) { // handling online loads
+            public void onSuccess(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
                     for(DataSnapshot childSnapshot:dataSnapshot.getChildren()){
                         if(!listIDs.contains(childSnapshot.getKey())) { // checks if the list already exists offline and is loaded already. Supposed to skip if it exists.
-                            String mapString = (String) childSnapshot.getValue(); // should grab the map string?
-                            HashMap<String, Object> newMap = new HashMap<String, Object>();
-                            Gson gson = new Gson();
-                            java.lang.reflect.Type type = new TypeToken<HashMap<String, Object>>() {
-                            }.getType();
-                            newMap = gson.fromJson(mapString, type); // pulls map off of the gson string
-                            ListObject newList = new ListObject(newMap);
-                            listOfLists.add(newList);
-                            if(!(categories.contains(newList.getListCategory().toLowerCase())) && !(newList.getListCategory().equals("None") && !(newList.getListCategory().equals("All")))){ // checks to see if the list happened to contain a new category it should document.
-                                categories.add(newList.getListCategory().toLowerCase());
-                            }
+                            String mapString = (String) childSnapshot.getValue(); // should grab the map string from firebase
+                            listConvert(mapString); // helper method to assist in online conversion
                         }
                         else continue;
                     }
+                    lListAdapter.notifyDataSetChanged(); // update the list after the process of getting online data down
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onStart() {
+                Log.d("MainListListener", "active!");
+            }
 
+            @Override
+            public void onFailure() {
+                Log.e("MainListListener", "FAILED!");
             }
         });
-        lListAdapter.notifyDataSetChanged();
+
+        lListAdapter.notifyDataSetChanged(); // loads local content
         categorySpinner = findViewById(R.id.categorySelectSpinner);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories); // enables category selector
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categorySpinner.setAdapter(adapter);
         categorySpinner.setOnItemSelectedListener(this);
 
-        lListAdapter.filterList(listOfLists);
+        lListAdapter.filterList(listOfLists);// resets the category spinner whenever the page refreshes.
         if(categorySpinner != null){
         categorySpinner.setSelection(0);}
     }
@@ -235,23 +237,23 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
     @Override
     protected void onResume() {
         super.onResume();
-        listUpdater();
+        listUpdater(); // updates list whenever you come back to the app
     }
 
 
     @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        String text = parent.getItemAtPosition(position).toString();
-        if (text.equals("All")){
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) { // process to filter lists by category
+        String text = parent.getItemAtPosition(position).toString(); //grabs category
+        if (text.equals("All")){ // if category is all, reset category filter and search filter
             lListAdapter.filterList(listOfLists);
             if(categoryFilteredLists != null){
             categoryFilteredLists.clear();}
             searchBar.getText().clear();
         }
-        else{
+        else{ // filter out any list that doesn't contain the specified category. Resets search
             text = text.toLowerCase();
             categoryFilteredLists.clear();
-            for(ListObject item : listOfLists){
+            for(ListObject item : listOfLists){ // loops through loaded lists.
                 if(item.getListCategory().toLowerCase().equals(text)){{
                     categoryFilteredLists.add(item);
                 }}
@@ -266,8 +268,38 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
 
     }
 
-    @Override
-    public void searchCategory(String _listName) {
 
+    public interface OnGetDataListener { // listener interface enabling proper loading from firebase
+        void onSuccess(DataSnapshot dataSnapshot);
+        void onStart();
+        void onFailure();
+    }
+
+    private void readData(DatabaseReference ref, final OnGetDataListener listener){ // dictates how the listeners will be used
+        listener.onStart();
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                listener.onSuccess(dataSnapshot); //successful downloads send the data off.
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                listener.onFailure();
+            }
+        });
+    }
+
+    private void listConvert(String listString){ // online->main menu list conversion. works largely the same as mapgrabber, but isn't actively grabbing data.
+        HashMap<String, Object> newMap = new HashMap<String, Object>();
+        Gson gson = new Gson();
+        java.lang.reflect.Type type = new TypeToken<HashMap<String, Object>>() {
+        }.getType();
+        newMap = gson.fromJson(listString, type); // pulls map off of the gson string
+        ListObject newList = new ListObject(newMap);
+        listOfLists.add(newList);
+        if(!(categories.contains(newList.getListCategory().toLowerCase())) && !(newList.getListCategory().equals("None") && !(newList.getListCategory().equals("All")))){ // checks to see if the list happened to contain a new category it should document.
+            categories.add(newList.getListCategory().toLowerCase());
+        }
     }
 }

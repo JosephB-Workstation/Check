@@ -34,11 +34,11 @@ public class List_Edit_Settings extends DialogFragment  implements List_Color_Se
         categorySelector = view.findViewById(R.id.categoryEditor);
 
 
-        if(getArguments().containsKey("colorId")){
+        if(getArguments().containsKey("colorId")){//grabs background color data
             colorId = getArguments().getDouble("colorId");
         } else {colorId = 0;}
 
-        if(getArguments().containsKey("category")){
+        if(getArguments().containsKey("category")){// grabs category
             category = getArguments().getString("category");
         }else{category = "None";}
 
@@ -47,9 +47,10 @@ public class List_Edit_Settings extends DialogFragment  implements List_Color_Se
             @Override
             public void onClick(View v) {
                 List_Color_Settings color_settings = new List_Color_Settings();
-                color_settings.show(getActivity().getSupportFragmentManager(), "Change color");
+                color_settings.show(getActivity().getSupportFragmentManager(), "Change color"); //change color button
             }
         });
+
         dialogBuilder.setView(view)
                 .setTitle("Edit List Settings")
                 .setPositiveButton("Save settings", new DialogInterface.OnClickListener() {

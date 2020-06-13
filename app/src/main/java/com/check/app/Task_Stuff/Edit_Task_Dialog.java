@@ -63,11 +63,12 @@ public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog
         dataholder = view.findViewById(R.id.toggleDueView);
 
         mrecursionChanger.setText("Recurs Daily");
-        recursionToggle = 1;
-        if(getArguments().containsKey("calendar")) {
+        recursionToggle = 1; // default recursion of daily.
+
+        if(getArguments().containsKey("calendar")) { // if a duedate or recursion date exists
             int timeCode = getArguments().getInt("timecode");
             dueDate = (Calendar) getArguments().getSerializable("calendar");
-            attachCalendar = true;
+            attachCalendar = true; //fill in information about the calendar to edit
             dataholder.setVisibility(View.VISIBLE);
             mdueToggle.setText("Due Toggle: on");
             year = dueDate.get(dueDate.YEAR) ;
@@ -76,15 +77,15 @@ public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog
             hour = dueDate.get(dueDate.HOUR_OF_DAY);
             minute = dueDate.get(dueDate.MINUTE);
             dayViewer.setText(new StringBuilder().append(this.month +1).append("/").append(this.day).append("/").append(this.year).append(" "));
-            TimeBuilder();
-            if(timeCode == 1){
+            TimeBuilder(); // private function to properly build time in military time (01:05, as opposed to 1:5)
+            if(timeCode == 1){// if the edited task has a duedate, special features here
                 mrecursionChanger.setVisibility(View.INVISIBLE);
                 mrecursionChanger.setText("Recurs Daily");
                 timerToggle = 1;
                 recursionToggle = 1;
                 mdueToggle.setText("Due Toggle: on");
             }
-            else if (timeCode == 2){
+            else if (timeCode == 2){//if the edited task has a recursion date, special features added here
                 recursionToggle = getArguments().getInt("recursion");
                 switch (recursionToggle){
                     case 0:
@@ -112,7 +113,7 @@ public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog
                 taskTimeMessage.setText("Recursion Date: ");
             }
 
-        }else{
+        }else{ // list has no timer.
             attachCalendar = false;
             dataholder.setVisibility(View.INVISIBLE);
             mdueToggle.setText("Due Toggle: off");
@@ -132,7 +133,7 @@ public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog
 
         mdueDate.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) { // date picker
                 DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), Edit_Task_Dialog.this,  year, month, day);
                 datePickerDialog.show();
             }
@@ -140,7 +141,7 @@ public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog
 
         mdueTime.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) { //time picker
                 TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), Edit_Task_Dialog.this, hour, minute, true);
                 timePickerDialog.show();
             }
@@ -148,8 +149,8 @@ public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog
 
         mdueToggle.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                if(timerToggle == 0){
+            public void onClick(View v) { // timer toggle button
+                if(timerToggle == 0){ // no timer goes to due timer
                     attachCalendar = true;
                     timerToggle++;
                     dataholder.setVisibility(View.VISIBLE);
@@ -157,7 +158,7 @@ public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog
                     taskTimeMessage.setText("Due Date: ");
                     mdueToggle.setText("Due Toggle: on");
                 }
-                else if (timerToggle == 1){
+                else if (timerToggle == 1){ // due timer goes to recursion timer
                     timerToggle++;
                     dataholder.setVisibility(View.VISIBLE);
                     mrecursionChanger.setVisibility(View.VISIBLE);
@@ -165,7 +166,7 @@ public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog
                     mdueToggle.setText("Recurring Task: on");
 
                 }
-                else{
+                else{ // recursion timer goes to no timer
                     attachCalendar = false;
                     timerToggle = 0;
                     mrecursionChanger.setVisibility(View.INVISIBLE);
@@ -176,7 +177,7 @@ public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog
         });
         mrecursionChanger.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) { // toggles recursion mode if recurring time is active.
                 switch(recursionToggle){
                     case 0: // this does mean that annual is label 0, daily is 1, etc.
                         recursionToggle++;

@@ -18,7 +18,7 @@ public class TaskObject implements Serializable {
     private Calendar dueDate;
     transient private  Timer dueTimer;
 
-    public TaskObject(String taskName, String taskDescription){
+    public TaskObject(String taskName, String taskDescription){ // self explanatory constructor when there is no timers
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.checkboxState = 0;
@@ -27,7 +27,7 @@ public class TaskObject implements Serializable {
     }
 
 
-    public TaskObject(String taskName, String taskDescription, Calendar dueDate, int timerState){
+    public TaskObject(String taskName, String taskDescription, Calendar dueDate, int timerState){ // self explanatory constructor when there is a due date
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.checkboxState = 0;
@@ -47,7 +47,7 @@ public class TaskObject implements Serializable {
     }
 
 
-    public TaskObject(String taskName, String taskDescription, Calendar dueDate, int timerState, int recursionTimerToggle){
+    public TaskObject(String taskName, String taskDescription, Calendar dueDate, int timerState, int recursionTimerToggle){ // self explanatory constructor when there is a recursion point.
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.checkboxState = 0;
@@ -76,6 +76,7 @@ public class TaskObject implements Serializable {
     public String getTaskName() {
         return taskName;
     }
+
     public String getTaskDescription(){
         return taskDescription;
     }
@@ -85,6 +86,7 @@ public class TaskObject implements Serializable {
     }
 
     public int getcheckboxState(){return checkboxState;}
+
     public int getTimerState(){
         if (timerState == 1){
             return 1;
@@ -99,7 +101,7 @@ public class TaskObject implements Serializable {
 
     public int getCheckboxStateSource(){return checkboxStateSource;}
 
-    public void setCheckBoxState(){
+    public void setCheckBoxState(){ // on - click setting of checkboxes
         if(checkboxState == 0 || checkboxState == 2){
             checkboxState = 1;
             checkboxStateSource = R.drawable.ischecked;
@@ -111,47 +113,47 @@ public class TaskObject implements Serializable {
     }
 
     public void setLateCheckBoxState(){ //Due date timer command
-        if(checkboxState == 0){
+        if(checkboxState == 0){ // if check box is empty, the task is late. Give it a red x
             checkboxState = 2;
             checkboxStateSource = R.drawable.islate;
         }
-        dueTimer = null;
+        dueTimer = null; //deletes timer after use
         timerState = 0;
     }
 
-    public void setRecursionCheckBoxState(){
-        if(checkboxState == 1){
+    public void setRecursionCheckBoxState(){ //Recurring timer command
+        if(checkboxState == 1){ // if item is checked off, we are unchecking it
             checkboxState = 0;
             checkboxStateSource = R.drawable.notchecked;
         }
-        year = dueDate.get(dueDate.YEAR) ;
+        year = dueDate.get(dueDate.YEAR) ; //ensures that these fields have the current recursion date's time, as it wouldn't if recursion was edited in. Without this, system would crash.
         month = dueDate.get(dueDate.MONTH);
         day = dueDate.get(dueDate.DAY_OF_MONTH);
         hour = dueDate.get(dueDate.HOUR_OF_DAY);
         minute = dueDate.get(dueDate.MINUTE);
 
         switch (recursionCode){
-            case 0: // this does mean that annual is label 0, daily is 1, etc.
+            case 0: // annually
                 year++;
                 break;
-            case 1:
-                minute++;//temporary testing value, is supposed to be day
+            case 1: //daily
+                day++;
                 break;
-            case 2:
+            case 2: //weekly
                 day += 7;
                 break;
-            case 3:
+            case 3: //bi-weekly
                 day += 14;
                 break;
-            case 4:
+            case 4: // monthly
                 month++;
                 break;
-            case 5:
+            case 5: //quarterly
                 month += 3;
                 break;
         }
 
-        dueDate.set(year, month, day, hour, minute);
+        dueDate.set(year, month, day, hour, minute); //sets new recursion date
 
         dueTimer = new Timer();
         TimerTask dueExecutor = new TimerTask() {
@@ -163,7 +165,7 @@ public class TaskObject implements Serializable {
 
           dueTimer.schedule(dueExecutor, dueDate.getTime());
 
-        year = dueDate.get(dueDate.YEAR) ;
+        year = dueDate.get(dueDate.YEAR) ; // updates list with current information. A little redundant,
         month = dueDate.get(dueDate.MONTH);
         day = dueDate.get(dueDate.DAY_OF_MONTH);
         hour = dueDate.get(dueDate.HOUR_OF_DAY);
@@ -173,6 +175,7 @@ public class TaskObject implements Serializable {
     public void setTaskName(String newName){
         taskName = newName;
     }
+
     public void setTaskDescription(String newDescription){
         taskDescription = newDescription;
     }
@@ -182,8 +185,8 @@ public class TaskObject implements Serializable {
     }
 
 
-    public void updateDueTimer(Calendar _calendar, int _timerState){
-                dueDate = _calendar;
+    public void updateDueTimer(Calendar _calendar, int _timerState){ // a long chain of conversions for timer based edits
+                dueDate = _calendar; // timerstate 0 = no timer, 1 = due date, 2 = recurring.
                 dueDate.set(_calendar.get(_calendar.YEAR), _calendar.get(_calendar.MONTH), _calendar.get(_calendar.DAY_OF_MONTH), _calendar.get(_calendar.HOUR_OF_DAY), _calendar.get(_calendar.MINUTE));
         if(timerState == 0) {
             if (_timerState == 1) {
@@ -230,7 +233,8 @@ public class TaskObject implements Serializable {
         }
         timerState = _timerState;
     }
-    public void updateDueTimer(){
+
+    public void updateDueTimer(){ // due timer canceler
         timerState = 0;
         recursionCode = 0;
         dueTimer.cancel();
@@ -238,7 +242,7 @@ public class TaskObject implements Serializable {
         dueDate = null;
     }
 
-    public void importTimeCheck(){
+    public void importTimeCheck(){ // cycles through each task with a due date or recursion date, ensures the information on them is up to date.
         if(timerState == 0){}
         else if (timerState == 1){
         if(dueDate != null){

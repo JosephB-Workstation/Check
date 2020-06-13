@@ -43,7 +43,7 @@ public class TListAdapter extends RecyclerView.Adapter<TListAdapter.ListViewHold
         holder.vhEntryButton.setOnClickListener(new View.OnClickListener(){
 
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) { // code for opening lists to the list activity.
                 Intent intent = new Intent(v.getContext(), List_Activity.class);
                 intent.putExtra("listName", listOfLists.get(position).getListName());
                 intent.putExtra("mode", 0);
@@ -63,7 +63,7 @@ public class TListAdapter extends RecyclerView.Adapter<TListAdapter.ListViewHold
         else return 0;
     }
 
-    public void filterList(ArrayList<ListObject> filteredList){
+    public void filterList(ArrayList<ListObject> filteredList){ // code to filter the lists via searches and categories.
         listOfLists = filteredList;
         notifyDataSetChanged();
     }

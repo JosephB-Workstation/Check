@@ -78,7 +78,7 @@ public class Create_Task_Dialog extends DialogFragment implements DatePickerDial
 
         mdueDate.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) { //date picker
                 DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), Create_Task_Dialog.this,  year, month, day);
                 datePickerDialog.show();
             }
@@ -86,7 +86,7 @@ public class Create_Task_Dialog extends DialogFragment implements DatePickerDial
 
         mdueTime.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) { // time picker
                 TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), Create_Task_Dialog.this, hour, minute, true);
                 timePickerDialog.show();
             }
@@ -94,7 +94,7 @@ public class Create_Task_Dialog extends DialogFragment implements DatePickerDial
 
         mdueToggle.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {// timer toggle
                 if(timerToggle == 0){
                     attachCalendar = true;
                     timerToggle++;
@@ -122,7 +122,7 @@ public class Create_Task_Dialog extends DialogFragment implements DatePickerDial
         });
         mrecursionChanger.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) { // recursion period toggle.
                 switch(recursionToggle){
                     case 0: // this does mean that annual is label 0, daily is 1, etc.
                         recursionToggle++;

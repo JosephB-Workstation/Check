@@ -119,26 +119,6 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
                         Log.d("Online load status", "FAILED");
                     }
                 });
-//                mUserListDB.addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) { // handling online loads
-//                        if(dataSnapshot.exists()){
-//                            for(DataSnapshot childSnapshot:dataSnapshot.getChildren()){
-//                                if(listID == childSnapshot.getKey()) { // checks if the list already exists offline and is loaded already. Supposed to skip if it exists.
-//                                    String mapString = (String) childSnapshot.getValue(); // should grab the map string?
-//                                    downloadedMap.put("stringMap", (String) childSnapshot.getValue());
-//                                }
-//                                else continue;
-//                            }
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                    }
-//
-//                });
 
             }
 
@@ -336,14 +316,14 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         gson.newBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
 
         String taskMapString = gson.toJson(listMap);
-        if(pref2.contains(listName)){editor2.remove(listName);}
-        editor2.putString(listName, taskMapString);
+        if(pref2.contains(listID)){editor2.remove(listID);}
+        editor2.putString(listID, taskMapString);
         editor2.commit();
         dataDb.setValue(taskMapString);
 
         String listSettings = gson.toJson(listInfo);
-        if(pref.contains(listName)){editor.remove(listName);}
-        editor.putString(listName, listSettings);
+        if(pref.contains(listID)){editor.remove(listID);}
+        editor.putString(listID, listSettings);
         editor.commit();
         listDb.setValue(listSettings);
 

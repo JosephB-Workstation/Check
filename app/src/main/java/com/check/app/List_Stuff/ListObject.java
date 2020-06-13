@@ -14,11 +14,15 @@ public class ListObject {
         listName = (String) listData.get("name");
         listSize = (listData.size() - 1);
         listBackgroundId = (Double) listData.get("background");
+
+
         if(listData.containsKey("category")) {
             listCategory = (String) listData.get("category");
         }else{
             listCategory = "None";
         }
+
+
         if (listData.containsKey("ID")){
         listID = (String) listData.get("ID");}
         else{
@@ -29,11 +33,15 @@ public class ListObject {
     public String getListName(){
         return listName;
     }
+
     public int getListSize(){
         return listSize;
     }
+
     public double getListBackgroundId() {return listBackgroundId;}
+
     public String getListCategory(){return listCategory;}
+
     public String getListID(){if (listID != null) return listID; else return "none"; }
 
 
