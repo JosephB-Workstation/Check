@@ -42,6 +42,7 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -190,7 +191,10 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
                             String mapString = (String) childSnapshot.getValue(); // should grab the map string from firebase
                             listConvert(mapString); // helper method to assist in online conversion
                         }
-                        else continue;
+                        else { // gets ran if the list is loaded offline already.
+                            String mapString = (String) childSnapshot.getValue(); // should grab the map string from firebase
+                            listConvertAndCompare(mapString); //if the list exists on both platforms, this will check to see which one is newer. If firebase's version is newer, it will be flagged as such for firebase loading instead.
+                        }
                     }
                     lListAdapter.notifyDataSetChanged(); // update the list after the process of getting online data down
                 }
@@ -220,12 +224,13 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
     }
 
     private void mapGrabber(String listKey){ // offline load
-        HashMap<String, Object> newMap = new HashMap<String, Object>();  // makes a new hashmap for the list of lists
+        HashMap<String, Object>newMap;
         Gson gson = new Gson();
+        gson.newBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
+        java.lang.reflect.Type type = new TypeToken<HashMap<String, ListObject>>() {}.getType();
         String savedMap = pref.getString(listKey, "uhoh"); // gets the gson string for each list of lists
-        java.lang.reflect.Type type = new TypeToken<HashMap<String, Object>>(){}.getType();
         newMap = gson.fromJson(savedMap, type); // pulls map off of the gson string
-        ListObject newList = new ListObject(newMap); // creates a new list object from the gson string
+        ListObject newList = (ListObject) newMap.get("list");
         listOfLists.add(newList);// adds list object to list of lists
         if(!(categories.contains(newList.getListCategory().toLowerCase())) && !(newList.getListCategory().equals("None") && !(newList.getListCategory().equals("All")))){ // checks to see if the list happened to contain a new category it should document.
             categories.add(newList.getListCategory().toLowerCase());
@@ -291,15 +296,38 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
     }
 
     private void listConvert(String listString){ // online->main menu list conversion. works largely the same as mapgrabber, but isn't actively grabbing data.
-        HashMap<String, Object> newMap = new HashMap<String, Object>();
+        HashMap<String, ListObject> newMap = new HashMap<String, ListObject>();
         Gson gson = new Gson();
-        java.lang.reflect.Type type = new TypeToken<HashMap<String, Object>>() {
-        }.getType();
+        gson.newBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
+        java.lang.reflect.Type type = new TypeToken<HashMap<String, ListObject>>() {}.getType();
         newMap = gson.fromJson(listString, type); // pulls map off of the gson string
-        ListObject newList = new ListObject(newMap);
+        ListObject newList = (ListObject) newMap.get("list");
         listOfLists.add(newList);
         if(!(categories.contains(newList.getListCategory().toLowerCase())) && !(newList.getListCategory().equals("None") && !(newList.getListCategory().equals("All")))){ // checks to see if the list happened to contain a new category it should document.
             categories.add(newList.getListCategory().toLowerCase());
         }
+    }
+
+    private void listConvertAndCompare(String listString){ // online->main menu list conversion. works largely the same as mapgrabber, but isn't actively grabbing data. It just checks if firebase has a newer copy of the list than the local copy
+        HashMap<String, ListObject>newMap;
+        Gson gson = new Gson();
+        gson.newBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
+        java.lang.reflect.Type type = new TypeToken<HashMap<String, ListObject>>() {}.getType();
+        newMap = gson.fromJson(listString, type); // pulls map off of the gson string
+        ListObject newList = (ListObject) newMap.get("list");
+        Calendar online = newList.getLastEdit();
+        int pos = 0;
+        for(ListObject item : listOfLists){
+            if(item.getListID().equals(newList.getListID())){
+                break;
+            }else{pos++; continue;}
+        }
+        Calendar offline = listOfLists.get(pos).getLastEdit();
+        double status = online.compareTo(offline);
+        if(status == 1){
+            listOfLists.get(pos).isNewerOnline();
+        }
+        else{}
+
     }
 }

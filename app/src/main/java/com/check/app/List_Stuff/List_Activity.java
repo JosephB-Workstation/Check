@@ -75,15 +75,13 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
 
         if(intent.getIntExtra("mode", 1) == 0) {
             listID = intent.getStringExtra("listID");
+            listName = intent.getStringExtra("listName");
             if (listID.equals("none")) {
                 listID = FirebaseDatabase.getInstance().getReference().child("user").child(FirebaseAuth.getInstance().getUid()).child("list").push().getKey();
             }
 
-            listName = intent.getStringExtra("listName");
-
-
-            if(pref2.contains(listName)){ // if the list is saved locally
-            savedMap = pref2.getString(listName, "");
+            if(pref2.contains(listID) && !(intent.getBooleanExtra("lastUpdate", false))){ // if the list is saved locally
+            savedMap = pref2.getString(listID, "");
             listLoader(savedMap);
             } else { // if load is online only at the moment
                 final Map downloadedMap = new HashMap<>();
@@ -139,17 +137,18 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
 
         else if(intent.getIntExtra("mode", 1) == 1){ // if the list was created, instead of loaded.
             listID = FirebaseDatabase.getInstance().getReference().child("user").child(FirebaseAuth.getInstance().getUid()).child("list").push().getKey();
-        Toolbar toolbar = findViewById(R.id.listToolBar); // list toolbar grabbed
-        listName = intent.getStringExtra("listName"); //grabs the name from MainActivity, which got it from the dialog
-        toolbar.setTitle(listName);// sets the local string variable to be the title of the toolbar.
-        listInfo.put("name", listName);
-        listInfo.put("category", listCategory);
-        listInfo.put("ID", listID);
-        setSupportActionBar(toolbar);
-        backgroundColorId = 0;
-        attachColorSettings(backgroundColorId);
-        taskListStarter(); // function to start the recycler view
-        storagePointer = taskList.size();}
+            Toolbar toolbar = findViewById(R.id.listToolBar); // list toolbar grabbed
+            listName = intent.getStringExtra("listName"); //grabs the name from MainActivity, which got it from the dialog
+            toolbar.setTitle(listName);// sets the local string variable to be the title of the toolbar.
+            listCategory = "None"; // temp fix for nulls
+            listInfo.put("name", listName);
+            listInfo.put("category", listCategory);
+            listInfo.put("ID", listID);
+            setSupportActionBar(toolbar);
+            backgroundColorId = 0;
+            attachColorSettings(backgroundColorId);
+            taskListStarter(); // function to start the recycler view
+            storagePointer = taskList.size();}
     }
 
     private void listLoader(String savedMap){
@@ -312,6 +311,20 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         DatabaseReference listDb = FirebaseDatabase.getInstance().getReference().child("user").child(FirebaseAuth.getInstance().getUid()).child("list").child(listID);
         DatabaseReference dataDb = FirebaseDatabase.getInstance().getReference().child("user").child(FirebaseAuth.getInstance().getUid()).child("data").child(listID);
 
+        String listNameSave = (String) listInfo.get("name");
+        String listCategorySave = "";
+        if(listInfo.containsKey("category")){
+            listCategorySave = (String) listInfo.get("category");
+        }else{listCategorySave = "None";}
+        double listBackground = (double) listInfo.get("background");
+        String listIDSave = (String) listInfo.get("ID");
+        Calendar date = Calendar.getInstance();
+
+
+        ListObject currentList = new ListObject(listNameSave, listCategorySave, listBackground, listIDSave, date);
+        HashMap<String, ListObject> finalList = new HashMap<String, ListObject>();
+        finalList.put("list", currentList);
+
         Gson gson = new Gson();
         gson.newBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
 
@@ -321,7 +334,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         editor2.commit();
         dataDb.setValue(taskMapString);
 
-        String listSettings = gson.toJson(listInfo);
+        String listSettings = gson.toJson(finalList);
         if(pref.contains(listID)){editor.remove(listID);}
         editor.putString(listID, listSettings);
         editor.commit();

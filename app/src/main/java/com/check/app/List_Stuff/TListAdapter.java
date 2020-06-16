@@ -1,6 +1,7 @@
 package com.check.app.List_Stuff;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,17 +40,19 @@ public class TListAdapter extends RecyclerView.Adapter<TListAdapter.ListViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ListViewHolder holder, final int position) {
-        holder.vhEntryButton.setText(listOfLists.get(position).getListName());
-        holder.vhEntryButton.setOnClickListener(new View.OnClickListener(){
+                holder.vhEntryButton.setText(listOfLists.get(position).getListName());
+                holder.vhEntryButton.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) { // code for opening lists to the list activity.
+                Boolean onlineUp = listOfLists.get(position).getNewerOnline();
                 Intent intent = new Intent(v.getContext(), List_Activity.class);
                 intent.putExtra("listName", listOfLists.get(position).getListName());
                 intent.putExtra("mode", 0);
                 intent.putExtra("listBackground", listOfLists.get(position).getListBackgroundId());
                 intent.putExtra("listCategory", listOfLists.get(position).getListCategory());
                 intent.putExtra("listID", listOfLists.get(position).getListID());
+                intent.putExtra("lastUpdate", onlineUp);
                 v.getContext().startActivity(intent);
             }
         });
