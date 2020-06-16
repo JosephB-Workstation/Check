@@ -42,6 +42,11 @@ public class ListObject {
 
     public void isNewerOnline(){newerOnline = true; }
 
+    public void setListName(String name){listName = name;}
+
+    public void setListCategory(String category){listCategory = category;}
+
+    public void setListBackgroundId(Double value){listBackgroundId = value;}
 
 }
 

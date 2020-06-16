@@ -20,5 +20,12 @@
         app:showAsAction="never">
 
     </item>
+
+    <item
+        android:id="@+id/listDelete"
+        android:title="Delete List"
+        app:showAsAction="never">
+
+    </item>
     
 </menu>

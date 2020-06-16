@@ -194,6 +194,8 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
                         else { // gets ran if the list is loaded offline already.
                             String mapString = (String) childSnapshot.getValue(); // should grab the map string from firebase
                             listConvertAndCompare(mapString); //if the list exists on both platforms, this will check to see which one is newer. If firebase's version is newer, it will be flagged as such for firebase loading instead.
+
+
                         }
                     }
                     lListAdapter.notifyDataSetChanged(); // update the list after the process of getting online data down
@@ -222,6 +224,8 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
         if(categorySpinner != null){
         categorySpinner.setSelection(0);}
     }
+
+
 
     private void mapGrabber(String listKey){ // offline load
         HashMap<String, Object>newMap;
@@ -326,8 +330,13 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
         double status = online.compareTo(offline);
         if(status == 1){
             listOfLists.get(pos).isNewerOnline();
+            listOfLists.get(pos).setListName(newList.getListName());
+            listOfLists.get(pos).setListCategory(newList.getListCategory());
+            listOfLists.get(pos).setListBackgroundId(newList.getListBackgroundId());
+            lListAdapter.notifyDataSetChanged();
         }
         else{}
+
 
     }
 }

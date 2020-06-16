@@ -19,4 +19,33 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="83dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="84dp"
+        android:layout_marginBottom="57dp"
+        app:layout_constraintBottom_toTopOf="@+id/loginButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/logoicon"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:contentDescription="LOGO"
+            android:src="@drawable/ischecked" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/logoicon"
+            android:layout_marginStart="20dp"
+            android:text="CHECK"
+            android:textColor="@android:color/black"
+            android:textSize="50sp" />
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

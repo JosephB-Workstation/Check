@@ -19,6 +19,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 
+import com.check.app.Login_Activity;
+import com.check.app.MainActivity;
 import com.check.app.R;
 import com.check.app.Task_Stuff.Create_Task_Dialog;
 import com.check.app.Task_Stuff.Edit_Task_Dialog;
@@ -39,7 +41,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-public class List_Activity extends AppCompatActivity implements Create_Task_Dialog.CreateTaskListener, Edit_Task_Dialog.editTaskListener, List_Edit_Settings.ListEditListener, List_Color_Settings.ColorSettingsListListener {
+public class List_Activity extends AppCompatActivity implements Create_Task_Dialog.CreateTaskListener, Edit_Task_Dialog.editTaskListener, List_Edit_Settings.ListEditListener, List_Color_Settings.ColorSettingsListListener, List_Delete_Dialog.ListDeleteListener {
     private RecyclerView lTasks; //First three variables are necessary for recycler view
     private RecyclerView.Adapter lTaskAdapter;
     private RecyclerView.LayoutManager lTaskLayoutManager;
@@ -55,6 +57,8 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
     SharedPreferences.Editor editor2;
     private HashMap<String, TaskObject> listMap;
     private HashMap<String, Object> listInfo;
+    private Toolbar toolbar;
+    private Boolean save = true;
 
 
     @Override
@@ -121,7 +125,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
             }
 
 
-            Toolbar toolbar = findViewById(R.id.listToolBar); // list toolbar grabbed
+            toolbar = findViewById(R.id.listToolBar); // list toolbar grabbed
             toolbar.setTitle(listName);// sets the local string variable to be the title of the toolbar.
             setSupportActionBar(toolbar);
             backgroundColorId = intent.getDoubleExtra("listBackground", 0.0);
@@ -179,6 +183,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
                 List_Edit_Settings editDialog = new List_Edit_Settings();
                 Bundle bundle = new Bundle();
                 bundle.putString("category", listCategory);
+                bundle.putString("name", listName);
                 bundle.putDouble("colorId", backgroundColorId);
                 editDialog.setArguments(bundle);
                 editDialog.show(getSupportFragmentManager(), "Edit List");
@@ -187,6 +192,14 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
                 taskList.clear(); //clears the arraylist
                 lTaskAdapter.notifyDataSetChanged();
                 listMap.clear();
+                return true;
+            case R.id.listDelete:
+                List_Delete_Dialog delete_dialog = new List_Delete_Dialog();
+                Bundle deleteBundle = new Bundle();
+                deleteBundle.putString("name", listName);
+                delete_dialog.setArguments(deleteBundle);
+                delete_dialog.show(getSupportFragmentManager(), "delete list");
+
             default: //uhoh
                 return super.onOptionsItemSelected(item);
         }
@@ -308,39 +321,57 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
 
         unregisterReceiver(minuteUpdateReciever);
 
-        DatabaseReference listDb = FirebaseDatabase.getInstance().getReference().child("user").child(FirebaseAuth.getInstance().getUid()).child("list").child(listID);
-        DatabaseReference dataDb = FirebaseDatabase.getInstance().getReference().child("user").child(FirebaseAuth.getInstance().getUid()).child("data").child(listID);
+            DatabaseReference listDb = FirebaseDatabase.getInstance().getReference().child("user").child(FirebaseAuth.getInstance().getUid()).child("list").child(listID);
+            DatabaseReference dataDb = FirebaseDatabase.getInstance().getReference().child("user").child(FirebaseAuth.getInstance().getUid()).child("data").child(listID);
+            if(!save){
+                if(pref2.contains(listID)){ // deletes the task list itself
+                    editor2.remove(listID);
+                    editor2.commit();
+                    dataDb.removeValue();
+                }
+                if(pref.contains(listID)){
+                    editor.remove(listID);
+                    editor.commit();
+                    listDb.removeValue(); // the id remains in firebase for cleanup of local devices too.
+                }
+            }
+            else if(save) { // if the data isn't flagged for deletion
+                String listNameSave = (String) listInfo.get("name");
+             String listCategorySave = "";
+                if (listInfo.containsKey("category")) {
+                listCategorySave = (String) listInfo.get("category");
+             } else {
+                   listCategorySave = "None";
+             }
+             double listBackground = (double) listInfo.get("background");
+             String listIDSave = (String) listInfo.get("ID");
+             Calendar date = Calendar.getInstance();
 
-        String listNameSave = (String) listInfo.get("name");
-        String listCategorySave = "";
-        if(listInfo.containsKey("category")){
-            listCategorySave = (String) listInfo.get("category");
-        }else{listCategorySave = "None";}
-        double listBackground = (double) listInfo.get("background");
-        String listIDSave = (String) listInfo.get("ID");
-        Calendar date = Calendar.getInstance();
 
+             ListObject currentList = new ListObject(listNameSave, listCategorySave, listBackground, listIDSave, date);
+             HashMap<String, ListObject> finalList = new HashMap<String, ListObject>();
+             finalList.put("list", currentList);
 
-        ListObject currentList = new ListObject(listNameSave, listCategorySave, listBackground, listIDSave, date);
-        HashMap<String, ListObject> finalList = new HashMap<String, ListObject>();
-        finalList.put("list", currentList);
+                Gson gson = new Gson();
+                gson.newBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
 
-        Gson gson = new Gson();
-        gson.newBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
+                String taskMapString = gson.toJson(listMap);
+                if (pref2.contains(listID)) {
+                    editor2.remove(listID);
+                }
+                editor2.putString(listID, taskMapString);
+                editor2.commit();
+                dataDb.setValue(taskMapString);
 
-        String taskMapString = gson.toJson(listMap);
-        if(pref2.contains(listID)){editor2.remove(listID);}
-        editor2.putString(listID, taskMapString);
-        editor2.commit();
-        dataDb.setValue(taskMapString);
-
-        String listSettings = gson.toJson(finalList);
-        if(pref.contains(listID)){editor.remove(listID);}
-        editor.putString(listID, listSettings);
-        editor.commit();
-        listDb.setValue(listSettings);
-
-    }
+                String listSettings = gson.toJson(finalList);
+                if (pref.contains(listID)) {
+                    editor.remove(listID);
+                }
+                editor.putString(listID, listSettings);
+                editor.commit();
+                listDb.setValue(listSettings);
+            }
+        }
 
     protected void onResume() {
         super.onResume();
@@ -348,10 +379,14 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
     }
 
     @Override
-    public void attachListSettings(String category) {
+    public void attachListSettings(String category, String name) {
         listCategory = category;
+        listName = name;
         if(listInfo.containsKey("category")){listInfo.remove("category");}
-        listInfo.put("category", category);
+        if(listInfo.containsKey("name")){listInfo.remove("name");}
+        listInfo.put("category", listCategory);
+        listInfo.put("name", listName);
+        toolbar.setTitle(listName);
     }
 
     private void readData(DatabaseReference ref, final OnGetDataListener listener){
@@ -367,6 +402,15 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
                 listener.onFailure();
             }
         });
+    }
+
+    @Override
+    public void deleteList() {
+        save = false;// removes saving flag
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class); // sends user back to mainactivity
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
     }
 
     public interface OnGetDataListener {

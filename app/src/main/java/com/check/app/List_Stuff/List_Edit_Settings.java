@@ -21,9 +21,9 @@ import com.check.app.Task_Stuff.Edit_Task_Dialog;
 
 public class List_Edit_Settings extends DialogFragment  implements List_Color_Settings.ColorSettingsListListener{
     private double colorId;
-    private String category;
+    private String category, name;
     private Button backgroundPicker;
-    private EditText categorySelector;
+    private EditText categorySelector, namePicker;
     private ListEditListener listEditListener;
 
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -32,6 +32,8 @@ public class List_Edit_Settings extends DialogFragment  implements List_Color_Se
         View view = inflater.inflate(R.layout.dialog_list_settings, null);//bureaucracy of setting up a dialog
         backgroundPicker =  view.findViewById(R.id.backgroundEditor);
         categorySelector = view.findViewById(R.id.categoryEditor);
+        namePicker = view.findViewById(R.id.nameEditor);
+
 
 
         if(getArguments().containsKey("colorId")){//grabs background color data
@@ -42,7 +44,12 @@ public class List_Edit_Settings extends DialogFragment  implements List_Color_Se
             category = getArguments().getString("category");
         }else{category = "None";}
 
+        if(getArguments().containsKey("name")){// grabs name
+            name = getArguments().getString("name");
+        }else{name = "?";}
+
         categorySelector.setText(category);
+        namePicker.setText(name);
         backgroundPicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,8 +65,9 @@ public class List_Edit_Settings extends DialogFragment  implements List_Color_Se
                     public void onClick(DialogInterface dialog, int which) {
                         if(!categorySelector.getText().toString().trim().isEmpty()){
                             category = categorySelector.getText().toString();
+                            name = namePicker.getText().toString();
                         }else{category = "None";}
-                        listEditListener.attachListSettings(category);
+                        listEditListener.attachListSettings(category, name);
 
                     }
                 })
@@ -78,7 +86,7 @@ public class List_Edit_Settings extends DialogFragment  implements List_Color_Se
     }
 
     public interface ListEditListener{
-        void attachListSettings(String category);
+        void attachListSettings(String category, String name);
     }
 
     @Override
