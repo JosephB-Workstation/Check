@@ -1,5 +1,7 @@
 package com.check.app.List_Stuff;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -8,7 +10,7 @@ public class ListObject {
     private String listName, listCategory;
     private int listSize;
     private double listBackgroundId;
-    private String listID;
+    private String listID, listOwnerId;
     private Calendar lastEdit;
     private boolean newerOnline;
 
@@ -19,8 +21,11 @@ public class ListObject {
         this.listID = listID;
         this.lastEdit = lastEdit;
         newerOnline = false;
+        listOwnerId = FirebaseAuth.getInstance().getUid();
     }
 
+
+    public String getListOwnerId() {return listOwnerId;}
 
     public String getListName(){
         return listName;

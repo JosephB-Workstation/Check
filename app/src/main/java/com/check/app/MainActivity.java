@@ -227,20 +227,24 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
 
 
 
-    private void mapGrabber(String listKey){ // offline load
-        HashMap<String, Object>newMap;
+    private void mapGrabber(String listKey) { // offline load
+        HashMap<String, Object> newMap;
         Gson gson = new Gson();
         gson.newBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
-        java.lang.reflect.Type type = new TypeToken<HashMap<String, ListObject>>() {}.getType();
+        java.lang.reflect.Type type = new TypeToken<HashMap<String, ListObject>>() {
+        }.getType();
         String savedMap = pref.getString(listKey, "uhoh"); // gets the gson string for each list of lists
         newMap = gson.fromJson(savedMap, type); // pulls map off of the gson string
         ListObject newList = (ListObject) newMap.get("list");
-        listOfLists.add(newList);// adds list object to list of lists
-        if(!(categories.contains(newList.getListCategory().toLowerCase())) && !(newList.getListCategory().equals("None") && !(newList.getListCategory().equals("All")))){ // checks to see if the list happened to contain a new category it should document.
-            categories.add(newList.getListCategory().toLowerCase());
-        }
+        if (newList.getListOwnerId().equals(FirebaseAuth.getInstance().getUid())) {
+            listOfLists.add(newList);// adds list object to list of lists
+            if (!(categories.contains(newList.getListCategory().toLowerCase())) && !(newList.getListCategory().equals("None") && !(newList.getListCategory().equals("All")))) { // checks to see if the list happened to contain a new category it should document.
+                categories.add(newList.getListCategory().toLowerCase());
+            }
 
-        if(!(listIDs.contains(newList.getListID()) && !newList.getListID().equals("none"))) listIDs.add(newList.getListID()); // adds to offline stored list of lists.
+            if (!(listIDs.contains(newList.getListID()) && !newList.getListID().equals("none")))
+                listIDs.add(newList.getListID()); // adds to offline stored list of lists.
+        }
     }
 
     @Override
