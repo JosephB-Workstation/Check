@@ -3,9 +3,12 @@ package com.check.app;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -67,6 +70,21 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
         setContentView(R.layout.activity_main); //sets activity view for mainmenu
 
         listIDs = new ArrayList<String>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2020, 5, 18, 13, 58);
+
+        //TEST NOTIFICATION
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "due")
+                .setSmallIcon(R.drawable.islate)
+                .setContentTitle("Your stuff is late")
+                .setContentText("Ouch. Very late.")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true)
+                .setWhen(calendar.getTimeInMillis());
+
+        NotificationManagerCompat notification = NotificationManagerCompat.from(this);
+        notification.notify(1, builder.build());
+
 
         Toolbar toolbar = findViewById(R.id.mainToolBar); //generates toolbar for mainmenu
         pref = getApplicationContext().getSharedPreferences("Check", 0);
