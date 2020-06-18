@@ -7,6 +7,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlarmManager;
+import android.app.ListActivity;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +25,7 @@ import android.widget.LinearLayout;
 import com.check.app.Login_Activity;
 import com.check.app.MainActivity;
 import com.check.app.R;
+import com.check.app.ReminderBroadcast;
 import com.check.app.Task_Stuff.Create_Task_Dialog;
 import com.check.app.Task_Stuff.Edit_Task_Dialog;
 import com.check.app.Task_Stuff.TaskAdapter;
@@ -216,16 +220,24 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
     }
 
     @Override
-    public void attachTaskSettings(String _taskName, String _taskDescription, Calendar date, int taskTimerToggle){
+    public void attachTaskSettings(String _taskName, String _taskDescription, Calendar date, int taskTimerToggle){ // created a task from a successful dialog- with a due date
         TaskObject newTask = new TaskObject(_taskName, _taskDescription, date, taskTimerToggle);
         taskList.add(newTask);//add to arraylist
         lTaskAdapter.notifyDataSetChanged();//update recycler
         storagePointer = taskList.size();
         listMap.put(Integer.toString((storagePointer -1)), taskList.get((storagePointer -1)));
+
+        Intent notificationIntent = new Intent(List_Activity.this, ReminderBroadcast.class);
+        notificationIntent.putExtra("id", newTask.getTaskID());
+        notificationIntent.putExtra("listName", listName);
+        notificationIntent.putExtra("taskName", _taskName);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(List_Activity.this, 0, notificationIntent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, newTask.getCalendar().getTimeInMillis(), pendingIntent);
     }
 
     @Override
-    public void attachTaskSettings(String _taskName, String _taskDescription, Calendar date, int taskTimerToggle, int recursionTimerToggle) {
+    public void attachTaskSettings(String _taskName, String _taskDescription, Calendar date, int taskTimerToggle, int recursionTimerToggle) { //created a task from a successful dialog - with a recursion timer
         TaskObject newTask = new TaskObject(_taskName, _taskDescription, date, taskTimerToggle, recursionTimerToggle);
         taskList.add(newTask);//add to arraylist
         lTaskAdapter.notifyDataSetChanged();//update recycler

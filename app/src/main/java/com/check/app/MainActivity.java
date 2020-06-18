@@ -8,7 +8,9 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlarmManager;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -71,10 +73,10 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
 
         listIDs = new ArrayList<String>();
         Calendar calendar = Calendar.getInstance();
-        calendar.set(2020, 5, 18, 13, 58);
+        calendar.set(2020, 5, 18, 15, 44);
 
         //TEST NOTIFICATION
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "due")
+/*        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "due")
                 .setSmallIcon(R.drawable.islate)
                 .setContentTitle("Your stuff is late")
                 .setContentText("Ouch. Very late.")
@@ -83,7 +85,15 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
                 .setWhen(calendar.getTimeInMillis());
 
         NotificationManagerCompat notification = NotificationManagerCompat.from(this);
-        notification.notify(1, builder.build());
+        notification.notify(1, builder.build());*/
+
+        //connects to the reminderBroadcast for timed execution.
+/*        Intent intent = new Intent(MainActivity.this, ReminderBroadcast.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+        long alarmtime = calendar.getTimeInMillis();
+        alarmManager.set(AlarmManager.RTC_WAKEUP, alarmtime, pendingIntent);*/
 
 
         Toolbar toolbar = findViewById(R.id.mainToolBar); //generates toolbar for mainmenu

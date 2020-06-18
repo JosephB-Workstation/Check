@@ -4,6 +4,7 @@ import com.check.app.R;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -17,6 +18,7 @@ public class TaskObject implements Serializable {
     private int year, month, day, hour, minute;
     private Calendar dueDate;
     transient private  Timer dueTimer;
+    private int taskID;
 
     public TaskObject(String taskName, String taskDescription){ // self explanatory constructor when there is no timers
         this.taskName = taskName;
@@ -24,6 +26,9 @@ public class TaskObject implements Serializable {
         this.checkboxState = 0;
         this.checkboxStateSource = R.drawable.notchecked;
         this.timerState = 0;
+
+        Random rand = new Random();
+        taskID = rand.nextInt();
     }
 
 
@@ -34,6 +39,16 @@ public class TaskObject implements Serializable {
         this.checkboxStateSource = R.drawable.notchecked;
         this.dueDate = dueDate;
         this.timerState = timerState;
+
+        Random rand = new Random();
+        taskID = rand.nextInt();
+
+        year = dueDate.get(dueDate.YEAR) ;
+        month = dueDate.get(dueDate.MONTH);
+        day = dueDate.get(dueDate.DAY_OF_MONTH);
+        hour = dueDate.get(dueDate.HOUR_OF_DAY);
+        minute = dueDate.get(dueDate.MINUTE);
+
 
 
         dueTimer = new Timer();
@@ -56,6 +71,15 @@ public class TaskObject implements Serializable {
         this.timerState = timerState;
         this.recursionCode = recursionTimerToggle;
 
+        Random rand = new Random();
+        taskID = rand.nextInt();
+
+        year = dueDate.get(dueDate.YEAR) ;
+        month = dueDate.get(dueDate.MONTH);
+        day = dueDate.get(dueDate.DAY_OF_MONTH);
+        hour = dueDate.get(dueDate.HOUR_OF_DAY);
+        minute = dueDate.get(dueDate.MINUTE);
+
         dueTimer = new Timer();
         TimerTask dueExecutor = new TimerTask() {
             @Override
@@ -64,12 +88,6 @@ public class TaskObject implements Serializable {
             }
         };
         dueTimer.schedule(dueExecutor, dueDate.getTime());
-
-        year = dueDate.get(dueDate.YEAR) ;
-        month = dueDate.get(dueDate.MONTH);
-        day = dueDate.get(dueDate.DAY_OF_MONTH);
-        hour = dueDate.get(dueDate.HOUR_OF_DAY);
-        minute = dueDate.get(dueDate.MINUTE);
 
     }
 
@@ -100,6 +118,8 @@ public class TaskObject implements Serializable {
     }
 
     public int getCheckboxStateSource(){return checkboxStateSource;}
+
+    public double getTaskID(){return taskID;}
 
     public void setCheckBoxState(){ // on - click setting of checkboxes
         if(checkboxState == 0 || checkboxState == 2){
