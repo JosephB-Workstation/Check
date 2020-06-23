@@ -12,11 +12,8 @@ import androidx.core.app.NotificationManagerCompat;
 public class ReminderBroadcast extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        //Intent internal = new Intent(context, ReminderBroadcast.class);
-      //  intent.setFlags(())
         Intent activity = new Intent(context, Login_Activity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, activity, 0);
-       // PendingIntent internalPendingIntent = PendingIntent.getActivity(context,0, internal, 0);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "due")
                 .setSmallIcon(R.drawable.ischecked)
                 .setContentTitle(intent.getStringExtra("listName"))

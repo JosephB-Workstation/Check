@@ -23,6 +23,7 @@ public class TaskObject implements Serializable {
     private Calendar dueDate;
     transient private  Timer dueTimer;
     private int taskID;
+    private notificationSender notificationListener;
 
 
     public TaskObject(String taskName, String taskDescription){ // self explanatory constructor when there is no timers
@@ -31,6 +32,7 @@ public class TaskObject implements Serializable {
         this.checkboxState = 0;
         this.checkboxStateSource = R.drawable.notchecked;
         this.timerState = 0;
+        this.notificationListener = null;
 
         Random rand = new Random();
         taskID = rand.nextInt();
@@ -44,6 +46,7 @@ public class TaskObject implements Serializable {
         this.checkboxStateSource = R.drawable.notchecked;
         this.dueDate = dueDate;
         this.timerState = timerState;
+        this.notificationListener = null;
 
         Random rand = new Random();
         taskID = rand.nextInt();
@@ -75,6 +78,7 @@ public class TaskObject implements Serializable {
         this.dueDate = dueDate;
         this.timerState = timerState;
         this.recursionCode = recursionTimerToggle;
+        this.notificationListener = null;
 
         Random rand = new Random();
         taskID = rand.nextInt();
@@ -93,7 +97,6 @@ public class TaskObject implements Serializable {
             }
         };
         dueTimer.schedule(dueExecutor, dueDate.getTime());
-
     }
 
     public String getTaskName() {
@@ -107,8 +110,6 @@ public class TaskObject implements Serializable {
     public int getRecursionCode(){
         return recursionCode;
     }
-
-    public int getcheckboxState(){return checkboxState;}
 
     public int getTimerState(){
         if (timerState == 1){
@@ -130,6 +131,7 @@ public class TaskObject implements Serializable {
         if(checkboxState == 0 || checkboxState == 2){
             checkboxState = 1;
             checkboxStateSource = R.drawable.ischecked;
+
         }
         else if(checkboxState == 1){
             checkboxState = 0;
@@ -271,6 +273,11 @@ public class TaskObject implements Serializable {
         if(timerState == 0){}
         else if (timerState == 1){
         if(dueDate != null){
+            if(dueDate.compareTo(Calendar.getInstance()) == 1){
+                if(notificationListener != null){
+                    notificationListener.onNotificationReady(taskName, dueDate, taskID);
+                }
+            }
             dueTimer = new Timer();
             TimerTask dueExecutor = new TimerTask() {
                 @Override
@@ -305,6 +312,14 @@ public class TaskObject implements Serializable {
             return true;
         }
         return false;
+    }
+
+    public void setNotificationListener(notificationSender listener){
+        this.notificationListener = listener;
+    }
+
+    public interface notificationSender{
+         void onNotificationReady(String taskName, Calendar taskCalendar, int taskID);
     }
 
 }

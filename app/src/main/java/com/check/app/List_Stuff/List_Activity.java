@@ -164,15 +164,19 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
             taskList.add(listMap.get(Integer.toString(i)));
             taskList.get(i).importTimerHandler();
             if (taskList.get(i).getTimerState() == 1){
-//TODO NOTIFICATION
-               Intent notificationIntent = new Intent(List_Activity.this, ReminderBroadcast.class);
-                notificationIntent.putExtra("id", taskList.get(i).getTaskID());
-                notificationIntent.putExtra("listName", listName);
-                notificationIntent.putExtra("taskName", taskList.get(i).getTaskName());
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(List_Activity.this, taskList.get(i).getTaskID(), notificationIntent, 0);
-                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-                alarmManager.cancel(pendingIntent);
-                alarmManager.set(AlarmManager.RTC_WAKEUP, taskList.get(i).getCalendar().getTimeInMillis(), pendingIntent);
+                taskList.get(i).setNotificationListener(new TaskObject.notificationSender() {
+                    @Override
+                    public void onNotificationReady(String taskName, Calendar taskCalendar, int taskID) {
+                        Intent notificationIntent = new Intent(List_Activity.this, ReminderBroadcast.class);
+                        notificationIntent.putExtra("id", taskID);
+                        notificationIntent.putExtra("listName", listName);
+                        notificationIntent.putExtra("taskName", taskName);
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(List_Activity.this, taskID, notificationIntent, 0);
+                        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                        alarmManager.cancel(pendingIntent);
+                        alarmManager.set(AlarmManager.RTC_WAKEUP, taskCalendar.getTimeInMillis(), pendingIntent);
+                    }
+                });
             }
         }
 
