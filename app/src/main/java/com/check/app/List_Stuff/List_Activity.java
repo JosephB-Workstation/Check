@@ -1,14 +1,12 @@
 package com.check.app.List_Stuff;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlarmManager;
-import android.app.ListActivity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -22,7 +20,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 
-import com.check.app.Login_Activity;
 import com.check.app.MainActivity;
 import com.check.app.R;
 import com.check.app.ReminderBroadcast;
@@ -31,7 +28,6 @@ import com.check.app.Task_Stuff.Edit_Task_Dialog;
 import com.check.app.Task_Stuff.TaskAdapter;
 import com.check.app.Task_Stuff.TaskObject;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -166,8 +162,20 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         listMap = gson.fromJson(savedMap, type);
         for (int i = 0; i < (listMap.size()); i++) {
             taskList.add(listMap.get(Integer.toString(i)));
-            taskList.get(i).importTimeCheck();
+            taskList.get(i).importTimerHandler();
+            if (taskList.get(i).getTimerState() == 1){
+//TODO NOTIFICATION
+               Intent notificationIntent = new Intent(List_Activity.this, ReminderBroadcast.class);
+                notificationIntent.putExtra("id", taskList.get(i).getTaskID());
+                notificationIntent.putExtra("listName", listName);
+                notificationIntent.putExtra("taskName", taskList.get(i).getTaskName());
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(List_Activity.this, taskList.get(i).getTaskID(), notificationIntent, 0);
+                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                alarmManager.cancel(pendingIntent);
+                alarmManager.set(AlarmManager.RTC_WAKEUP, taskList.get(i).getCalendar().getTimeInMillis(), pendingIntent);
+            }
         }
+
     }
 
     public boolean onCreateOptionsMenu(Menu menu) { // makes toolbar options
@@ -231,7 +239,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         notificationIntent.putExtra("id", newTask.getTaskID());
         notificationIntent.putExtra("listName", listName);
         notificationIntent.putExtra("taskName", _taskName);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(List_Activity.this, 0, notificationIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(List_Activity.this, newTask.getTaskID(), notificationIntent, 0);
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, newTask.getCalendar().getTimeInMillis(), pendingIntent);
     }
@@ -267,6 +275,14 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         lTaskAdapter.notifyDataSetChanged();
         listMap.remove(Integer.toString(_position));
         listMap.put(Integer.toString(_position), taskList.get(_position));
+
+        Intent notificationIntent = new Intent(List_Activity.this, ReminderBroadcast.class);
+        notificationIntent.putExtra("id", taskList.get(_position).getTaskID());
+        notificationIntent.putExtra("listName", listName);
+        notificationIntent.putExtra("taskName", _taskName);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(List_Activity.this, taskList.get(_position).getTaskID(), notificationIntent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
     }
 
     public void attachUpdatedTaskSettings(String _taskName, String _taskDescription, int _position, Calendar _dueDate, int timerToggle){
@@ -276,6 +292,15 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         lTaskAdapter.notifyDataSetChanged();
         listMap.remove(Integer.toString(_position));
         listMap.put(Integer.toString(_position), taskList.get(_position));
+
+        Intent notificationIntent = new Intent(List_Activity.this, ReminderBroadcast.class);
+        notificationIntent.putExtra("id", taskList.get(_position).getTaskID());
+        notificationIntent.putExtra("listName", listName);
+        notificationIntent.putExtra("taskName", _taskName);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(List_Activity.this, taskList.get(_position).getTaskID(), notificationIntent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, taskList.get(_position).getCalendar().getTimeInMillis(), pendingIntent);
     }
 
     @Override
@@ -287,6 +312,14 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         lTaskAdapter.notifyDataSetChanged();
         listMap.remove(Integer.toString(_position));
         listMap.put(Integer.toString(_position), taskList.get(_position));
+
+        Intent notificationIntent = new Intent(List_Activity.this, ReminderBroadcast.class);
+        notificationIntent.putExtra("id", taskList.get(_position).getTaskID());
+        notificationIntent.putExtra("listName", listName);
+        notificationIntent.putExtra("taskName", _taskName);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(List_Activity.this, taskList.get(_position).getTaskID(), notificationIntent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
     }
 
     @Override
@@ -424,6 +457,17 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         startActivity(intent);
         finish();
     }
+
+/*    private void notificationMaker(){
+        Intent notificationIntent = new Intent(List_Activity.this, ReminderBroadcast.class);
+        notificationIntent.putExtra("id", taskList.get(i).getTaskID());
+        notificationIntent.putExtra("listName", listName);
+        notificationIntent.putExtra("taskName", taskList.get(i).getTaskName());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(List_Activity.this, taskList.get(i).getTaskID(), notificationIntent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, taskList.get(i).getCalendar().getTimeInMillis(), pendingIntent);
+    }*/
 
     public interface OnGetDataListener {
         void onSuccess(DataSnapshot dataSnapshot);

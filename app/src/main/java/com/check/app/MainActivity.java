@@ -5,9 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -26,6 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.check.app.List_Stuff.ListObject;
 import com.check.app.List_Stuff.List_Activity;
@@ -74,27 +77,6 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
         listIDs = new ArrayList<String>();
         Calendar calendar = Calendar.getInstance();
         calendar.set(2020, 5, 18, 15, 44);
-
-        //TEST NOTIFICATION
-/*        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "due")
-                .setSmallIcon(R.drawable.islate)
-                .setContentTitle("Your stuff is late")
-                .setContentText("Ouch. Very late.")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setAutoCancel(true)
-                .setWhen(calendar.getTimeInMillis());
-
-        NotificationManagerCompat notification = NotificationManagerCompat.from(this);
-        notification.notify(1, builder.build());*/
-
-        //connects to the reminderBroadcast for timed execution.
-/*        Intent intent = new Intent(MainActivity.this, ReminderBroadcast.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-
-        long alarmtime = calendar.getTimeInMillis();
-        alarmManager.set(AlarmManager.RTC_WAKEUP, alarmtime, pendingIntent);*/
-
 
         Toolbar toolbar = findViewById(R.id.mainToolBar); //generates toolbar for mainmenu
         pref = getApplicationContext().getSharedPreferences("Check", 0);
@@ -227,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
                         }
                     }
                     lListAdapter.notifyDataSetChanged(); // update the list after the process of getting online data down
+                    Toast.makeText(MainActivity.this, "Content downloaded", Toast.LENGTH_SHORT).show();
                 }
             }
 

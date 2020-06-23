@@ -1,5 +1,9 @@
 package com.check.app.Task_Stuff;
 
+import android.content.Context;
+
+import androidx.annotation.NonNull;
+
 import com.check.app.R;
 
 import java.io.Serializable;
@@ -19,6 +23,7 @@ public class TaskObject implements Serializable {
     private Calendar dueDate;
     transient private  Timer dueTimer;
     private int taskID;
+
 
     public TaskObject(String taskName, String taskDescription){ // self explanatory constructor when there is no timers
         this.taskName = taskName;
@@ -119,7 +124,7 @@ public class TaskObject implements Serializable {
 
     public int getCheckboxStateSource(){return checkboxStateSource;}
 
-    public double getTaskID(){return taskID;}
+    public int getTaskID(){return taskID;}
 
     public void setCheckBoxState(){ // on - click setting of checkboxes
         if(checkboxState == 0 || checkboxState == 2){
@@ -145,6 +150,7 @@ public class TaskObject implements Serializable {
         if(checkboxState == 1){ // if item is checked off, we are unchecking it
             checkboxState = 0;
             checkboxStateSource = R.drawable.notchecked;
+            timerState = 0;
         }
         year = dueDate.get(dueDate.YEAR) ; //ensures that these fields have the current recursion date's time, as it wouldn't if recursion was edited in. Without this, system would crash.
         month = dueDate.get(dueDate.MONTH);
@@ -204,7 +210,6 @@ public class TaskObject implements Serializable {
         recursionCode = newcode;
     }
 
-
     public void updateDueTimer(Calendar _calendar, int _timerState){ // a long chain of conversions for timer based edits
                 dueDate = _calendar; // timerstate 0 = no timer, 1 = due date, 2 = recurring.
                 dueDate.set(_calendar.get(_calendar.YEAR), _calendar.get(_calendar.MONTH), _calendar.get(_calendar.DAY_OF_MONTH), _calendar.get(_calendar.HOUR_OF_DAY), _calendar.get(_calendar.MINUTE));
@@ -262,7 +267,7 @@ public class TaskObject implements Serializable {
         dueDate = null;
     }
 
-    public void importTimeCheck(){ // cycles through each task with a due date or recursion date, ensures the information on them is up to date.
+    public void importTimerHandler(){ // cycles through each task with a due date or recursion date, ensures the information on them is up to date.
         if(timerState == 0){}
         else if (timerState == 1){
         if(dueDate != null){
@@ -301,4 +306,5 @@ public class TaskObject implements Serializable {
         }
         return false;
     }
+
 }
