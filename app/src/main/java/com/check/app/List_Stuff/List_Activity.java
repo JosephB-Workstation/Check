@@ -162,7 +162,6 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         listMap = gson.fromJson(savedMap, type);
         for (int i = 0; i < (listMap.size()); i++) {
             taskList.add(listMap.get(Integer.toString(i)));
-            taskList.get(i).importTimerHandler();
             if (taskList.get(i).getTimerState() == 1){
                 taskList.get(i).setNotificationListener(new TaskObject.notificationSender() {
                     @Override
@@ -178,6 +177,8 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
                     }
                 });
             }
+            taskList.get(i).importTimerHandler();
+
         }
 
     }
