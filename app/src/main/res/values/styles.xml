@@ -1,11 +1,44 @@
 <resources>
 
-    <!-- Base application theme. -->
+    <!-- light application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="backgroundColor">#fcfcfc</item>
+        <item name="cardBackground">#fcfcfc</item>
+        <item name="textColor">#000000</item>
+        <item name="tintColor">#000000</item>
+        <item name="buttonColor">#a5a5a5</item>
     </style>
 
+    <!-- dark application theme. -->
+    <style name="darkTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">#434343</item>
+        <item name="colorPrimaryDark">#000000</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="backgroundColor">#505050</item>
+        <item name="cardBackground">#606060</item>
+        <item name="textColor">#ffffff</item>
+        <item name="tintColor">#ffffff</item>
+        <item name="buttonColor">#363636</item>
+    </style>
+
+    <style name ="LightDialogCustom" parent="@android:style/Theme.Dialog">
+        <item name = "android:textColor">#000000</item>
+        <item name = "android:textStyle">bold</item>
+        <item name = "android:headerDividersEnabled">true</item>
+        <item name = "android:typeface">normal</item>
+        <item name = "android:background">#fcfcfc</item>
+    </style>
+
+    <style name ="DarkDialogCustom" parent="@android:style/Theme.Dialog">
+        <item name = "android:textColor">#ffffff</item>
+        <item name = "android:textStyle">bold</item>
+        <item name = "android:headerDividersEnabled">true</item>
+        <item name = "android:typeface">normal</item>
+        <item name = "android:background">#505050</item>
+    </style>
 </resources>

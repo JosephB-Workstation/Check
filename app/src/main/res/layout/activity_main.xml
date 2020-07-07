@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="?attr/backgroundColor">
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -29,6 +30,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="List name"
+        android:textColor="?attr/textColor"
+        android:textColorHint="?attr/textColor"
+        android:backgroundTint="?attr/tintColor"
         android:id="@+id/searchBar"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
@@ -40,6 +44,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/categorySelectSpinner"
+            android:textColor="?attr/textColor"
             android:layout_weight="20"
             android:layout_gravity="center">
 

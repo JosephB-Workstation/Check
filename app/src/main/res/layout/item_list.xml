@@ -16,6 +16,8 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="?attr/textColor"
+        android:background="?attr/buttonColor"
         android:id="@+id/listButton">
 
     </Button>

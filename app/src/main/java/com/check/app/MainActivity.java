@@ -2,6 +2,7 @@ package com.check.app;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -13,6 +14,7 @@ import android.Manifest;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -38,6 +40,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.api.client.util.DateTime;
+import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.EventDateTime;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -49,14 +54,17 @@ import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONObject;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements Create_List_Dialog.CreateListListener, AdapterView.OnItemSelectedListener { //main logged in menu
+public class MainActivity extends AppCompatActivity implements Create_List_Dialog.CreateListListener, AdapterView.OnItemSelectedListener, Settings_Dialog.AppSettingsEditor { //main logged in menu
     private RecyclerView lLists; //First three variables are necessary for recycler view
     private TListAdapter lListAdapter;
     private RecyclerView.LayoutManager lListLayoutManager;
@@ -72,18 +80,43 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
+            setTheme(R.style.darkTheme);
+        }else setTheme(R.style.AppTheme);
         setContentView(R.layout.activity_main); //sets activity view for mainmenu
 
+
+
+
+
         listIDs = new ArrayList<String>();
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2020, 5, 18, 15, 44);
+
+
+        //TODO: Calendar test code
+        //
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.set(2020, 5, 18, 15, 44);
+//        Event event = new Event()
+//                .setSummary("Test event")
+//                .setDescription("Is this thing on?");
+//        long milis = Calendar.getInstance().getTimeInMillis();
+//        Calendar test = Calendar.getInstance();
+//        DateTime validcheck = new DateTime(milis);
+//        EventDateTime start = new EventDateTime()
+//                .setDateTime(validcheck);
+//        event.setStart(start);
+//        event.setEnd(start);
+//        String calendarId = "primary";
+//        event = service.events().insert(calendarId, event).execute();
+
+
+
 
         Toolbar toolbar = findViewById(R.id.mainToolBar); //generates toolbar for mainmenu
         pref = getApplicationContext().getSharedPreferences("Check", 0);
         setSupportActionBar(toolbar);
         ListStarter(); // function to initiate the main menu list
         searchBar = findViewById(R.id.searchBar);
-
 
 
         searchBar.addTextChangedListener(new TextWatcher() { //search bar text listener
@@ -153,6 +186,10 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 finish();
+                return true;
+            case R.id.Settings:
+                Settings_Dialog settings_dialog = new Settings_Dialog();
+                settings_dialog.show(getSupportFragmentManager(), "SETTINGS");
                 return true;
             default://if this ever gets run, something has gone wrong.
                 return super.onOptionsItemSelected(item);
@@ -226,8 +263,9 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
 
         lListAdapter.notifyDataSetChanged(); // loads local content
         categorySpinner = findViewById(R.id.categorySelectSpinner);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories); // enables category selector
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.spinner, categories); // enables category selector
+        //adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown);
         categorySpinner.setAdapter(adapter);
         categorySpinner.setOnItemSelectedListener(this);
 
@@ -290,6 +328,14 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    @Override
+    public void attachSettings(Boolean darkMode) { // settings manager for main app settings
+        if(!darkMode){
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        recreate();
     }
 
 

@@ -9,6 +9,11 @@
     </item>
 
     <item
+        android:id="@+id/Settings"
+        android:title="Settings"
+        app:showAsAction="never">
+    </item>
+    <item
         android:id="@+id/logOut"
         android:title="Log Out"
         app:showAsAction="never">
