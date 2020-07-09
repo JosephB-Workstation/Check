@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="wrap_content"
-    android:layout_height="wrap_content" android:layout_margin="7dp">
+    android:layout_height="wrap_content" android:layout_margin="7dp" android:background="?attr/cardBackground">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="List Name: "
         android:textSize="20sp"
-        android:textColor="@android:color/black">
+        android:textColor="?attr/textColor">
 
     </TextView>
 
@@ -16,7 +16,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/nameEditor"
-        android:hint="List Name here">
+        android:hint="List Name here"
+        android:textColor="?attr/textColor"
+        android:textColorHint="?attr/textColor"
+        android:backgroundTint="?attr/tintColor">
 
     </EditText>
 
@@ -25,7 +28,7 @@
         android:layout_height="wrap_content"
         android:text="Sorting Category: "
         android:textSize="20sp"
-        android:textColor="@android:color/black">
+        android:textColor="?attr/textColor">
 
     </TextView>
 
@@ -33,7 +36,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/categoryEditor"
-        android:hint="Category name here">
+        android:hint="Category name here"
+        android:textColor="?attr/textColor"
+        android:textColorHint="?attr/textColor"
+        android:backgroundTint="?attr/tintColor">
 
     </EditText>
 
@@ -43,7 +49,8 @@
         android:background="@android:color/transparent"
         android:text="Background Settings            "
         android:padding="3dp"
-        android:id="@+id/backgroundEditor">
+        android:id="@+id/backgroundEditor"
+        android:textColor="?attr/textColor">
 
     </Button>
 

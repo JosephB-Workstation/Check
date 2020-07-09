@@ -11,12 +11,15 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.DialogFragment;
 
 import com.check.app.Create_List_Dialog;
 import com.check.app.R;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class List_Color_Settings extends DialogFragment {
+    private boolean darkMode;
     int colorId = 0;
     private String[] colors = new String[]{"Yellow", "Blue", "Green", "Purple"}; //list of options.
     private ColorSettingsListListener colorSettingsListListener;
@@ -24,7 +27,17 @@ public class List_Color_Settings extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+
+        //dark state init
+        if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
+            darkMode = true;
+        } else darkMode = false;
+        //dialog builder builder
+        MaterialAlertDialogBuilder dialogBuilder = null;
+        if(darkMode){
+            dialogBuilder = new MaterialAlertDialogBuilder(getActivity(), R.style.DarkDialogCustom);}
+        else {dialogBuilder = new MaterialAlertDialogBuilder(getActivity(), R.style.LightDialogCustom);}
+
         LayoutInflater inflater = requireActivity().getLayoutInflater();//bureaucracy to make custom dialog
         View view = inflater.inflate(R.layout.dialog_color_settings, null);
         dialogBuilder.setView(view)

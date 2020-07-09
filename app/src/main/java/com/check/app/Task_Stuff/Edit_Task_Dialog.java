@@ -18,9 +18,11 @@ import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.DialogFragment;
 
 import com.check.app.R;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.Calendar;
 
@@ -31,13 +33,24 @@ public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog
     private Button mdueDate, mdueTime, mdueToggle, mrecursionChanger;
     private TextView dayViewer, timeViewer, taskTimeMessage;
     private RelativeLayout dataholder;
-    private Boolean attachCalendar;
+    private Boolean attachCalendar, darkMode;
     private Calendar dueDate, defaultCalendar;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+        //init darkmode
+        //state set
+        if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
+            darkMode = true;
+        } else darkMode = false;
+
+        //builder of the builder for the dialog
+        MaterialAlertDialogBuilder dialogBuilder = null;
+        if(darkMode){
+            dialogBuilder = new MaterialAlertDialogBuilder(getActivity(), R.style.DarkDialogCustom);}
+        else {dialogBuilder = new MaterialAlertDialogBuilder(getActivity(), R.style.LightDialogCustom);}
+
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_create_task, null); //bureaucracy to make custom dialog
 
@@ -134,7 +147,10 @@ public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog
         mdueDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { // date picker
-                DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), Edit_Task_Dialog.this,  year, month, day);
+                DatePickerDialog datePickerDialog = null;
+                if(!darkMode)
+                {datePickerDialog = new DatePickerDialog(getActivity(), Edit_Task_Dialog.this,  year, month, day);}
+                else {datePickerDialog = new DatePickerDialog(getActivity(), AlertDialog.THEME_DEVICE_DEFAULT_DARK, Edit_Task_Dialog.this, year, month, day);}
                 datePickerDialog.show();
             }
         });
@@ -142,7 +158,10 @@ public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog
         mdueTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { //time picker
-                TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), Edit_Task_Dialog.this, hour, minute, true);
+                TimePickerDialog timePickerDialog = null;
+                if(!darkMode){
+                    timePickerDialog = new TimePickerDialog(getActivity(), Edit_Task_Dialog.this, hour, minute, true);}
+                else{timePickerDialog = new TimePickerDialog(getActivity(), AlertDialog.THEME_DEVICE_DEFAULT_DARK, Edit_Task_Dialog.this, hour, minute, true);}
                 timePickerDialog.show();
             }
         });

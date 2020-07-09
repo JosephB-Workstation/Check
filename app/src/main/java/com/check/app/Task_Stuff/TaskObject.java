@@ -152,7 +152,6 @@ public class TaskObject implements Serializable {
         if(checkboxState == 1){ // if item is checked off, we are unchecking it
             checkboxState = 0;
             checkboxStateSource = R.drawable.notchecked;
-            timerState = 0;
         }
         year = dueDate.get(dueDate.YEAR) ; //ensures that these fields have the current recursion date's time, as it wouldn't if recursion was edited in. Without this, system would crash.
         month = dueDate.get(dueDate.MONTH);
@@ -222,6 +221,7 @@ public class TaskObject implements Serializable {
                     @Override
                     public void run() { setLateCheckBoxState(); }};
                 dueTimer.schedule(dueExecutor, dueDate.getTime());
+                timerState = _timerState;
 
             } else if (_timerState == 2){
                 dueTimer = new Timer();
@@ -229,6 +229,7 @@ public class TaskObject implements Serializable {
                     @Override
                     public void run() { setRecursionCheckBoxState(); }};
                 dueTimer.schedule(dueExecutor, dueDate.getTime());
+                timerState = _timerState;
             }
         }
         else if(timerState == 1 || timerState == 2){
@@ -236,6 +237,7 @@ public class TaskObject implements Serializable {
                 dueTimer.cancel();
                 dueTimer = null;
                 dueDate = null;
+                timerState = _timerState;
             }
             else if(_timerState == 1){
                 dueTimer.cancel();
@@ -247,6 +249,7 @@ public class TaskObject implements Serializable {
                     }
                 };
                 dueTimer.schedule(dueExecutor, dueDate.getTime());
+                timerState = _timerState;
             }
             else if(_timerState == 2){
                 dueTimer.cancel();
@@ -256,6 +259,7 @@ public class TaskObject implements Serializable {
                     public void run() { setRecursionCheckBoxState(); }
                 };
                 dueTimer.schedule(dueExecutor, dueDate.getTime());
+                timerState = _timerState;
             }
         }
         timerState = _timerState;

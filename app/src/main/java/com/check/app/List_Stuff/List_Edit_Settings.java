@@ -13,10 +13,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.DialogFragment;
 
 import com.check.app.R;
 import com.check.app.Task_Stuff.Edit_Task_Dialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 
 public class List_Edit_Settings extends DialogFragment  implements List_Color_Settings.ColorSettingsListListener{
@@ -25,9 +27,22 @@ public class List_Edit_Settings extends DialogFragment  implements List_Color_Se
     private Button backgroundPicker;
     private EditText categorySelector, namePicker;
     private ListEditListener listEditListener;
+    private Boolean darkMode;
 
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+        //Dark mode button handling
+        //state init
+        if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
+            darkMode = true;
+        } else darkMode = false;
+
+        //builder of the builder
+        MaterialAlertDialogBuilder dialogBuilder = null;
+        if(darkMode){
+            dialogBuilder = new MaterialAlertDialogBuilder(getActivity(), R.style.DarkDialogCustom);}
+        else {dialogBuilder = new MaterialAlertDialogBuilder(getActivity(), R.style.LightDialogCustom);}
+
+       // AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_list_settings, null);//bureaucracy of setting up a dialog
         backgroundPicker =  view.findViewById(R.id.backgroundEditor);

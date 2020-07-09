@@ -5,12 +5,14 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:theme="@style/Theme.AppCompat.DayNight.Dialog.Alert"
-    android:padding="20dp">
+    android:padding="20dp"
+    android:background="?attr/cardBackground">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Task Name:"
+        android:textColor="?attr/textColor"
         android:textSize="20sp">
 
     </TextView>
@@ -22,7 +24,10 @@
         android:inputType="text"
         android:text=""
         android:autofillHints="Task name"
-        android:id="@+id/taskName">
+        android:id="@+id/taskName"
+        android:textColor="?attr/textColor"
+        android:textColorHint="?attr/textColor"
+        android:backgroundTint="?attr/tintColor">
 
     </EditText>
 
@@ -30,6 +35,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Task Description:"
+        android:textColor="?attr/textColor"
+
         android:layout_marginTop="20dp"
         android:textSize="20sp">
 
@@ -44,7 +51,10 @@
         android:maxLength="2000"
         android:maxLines="4"
         android:inputType="textMultiLine"
-        android:text="">
+        android:text=""
+        android:textColor="?attr/textColor"
+        android:textColorHint="?attr/textColor"
+        android:backgroundTint="?attr/tintColor">
 
     </EditText>
 <RelativeLayout
@@ -56,6 +66,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Task due: "
+        android:textColor="?attr/textColor"
         android:id="@+id/taskTimeMessage">
 
     </TextView>
@@ -67,6 +78,7 @@
         android:id = "@+id/dayView"
         android:layout_marginRight="5dp"
         android:layout_marginLeft="5dp"
+        android:textColor="?attr/textColor"
         android:layout_toRightOf="@id/taskTimeMessage">
     </TextView>
 
@@ -75,6 +87,7 @@
         android:layout_height="wrap_content"
         android:text="00:00"
         android:id = "@+id/timeView"
+        android:textColor="?attr/textColor"
         android:layout_toRightOf="@id/dayView">
 
     </TextView>
@@ -88,6 +101,7 @@
         android:text="Set due date"
         android:background="@android:color/transparent"
         android:layout_marginTop="5dp"
+        android:textColor="?attr/textColor"
         android:id="@+id/dueDateButton">
 
     </Button>
@@ -98,6 +112,7 @@
         android:text="Set due time"
         android:background="@android:color/transparent"
         android:layout_marginTop="5dp"
+        android:textColor="?attr/textColor"
         android:layout_marginLeft="15dp"
         android:id="@+id/dueTimeButton">
 
@@ -107,9 +122,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/dueTimeButton"
-        android:text="Due Toggle: off"
+        android:text="Timer Functions: off"
         android:background="@android:color/transparent"
         android:layout_marginTop="5dp"
+        android:textColor="?attr/textColor"
         android:layout_marginLeft="15dp"
         android:id="@+id/dueToggleButton">
 
@@ -121,6 +137,7 @@
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:text="Recursion Rate"
+        android:textColor="?attr/textColor"
         android:id="@+id/recursionRateButton">
 
     </Button>

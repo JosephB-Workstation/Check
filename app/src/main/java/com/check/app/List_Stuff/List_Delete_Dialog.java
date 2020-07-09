@@ -10,16 +10,31 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.DialogFragment;
 
 import com.check.app.R;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class List_Delete_Dialog  extends DialogFragment {
-    String name;
+    private String name;
     private ListDeleteListener listDeleteListener;
+    private Boolean darkMode;
 
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState){
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+
+        //Dark mode handling
+        //state init
+        if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
+            darkMode = true;
+        } else darkMode = false;
+
+        //builder of the builder
+        MaterialAlertDialogBuilder dialogBuilder = null;
+        if(darkMode){
+            dialogBuilder = new MaterialAlertDialogBuilder(getActivity(), R.style.DarkDialogCustom);}
+        else {dialogBuilder = new MaterialAlertDialogBuilder(getActivity(), R.style.LightDialogCustom);}
+
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_delete_list, null);
 

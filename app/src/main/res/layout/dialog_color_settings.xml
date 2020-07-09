@@ -4,6 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:theme="@style/Theme.AppCompat.DayNight.Dialog.Alert">
+    android:theme="@style/Theme.AppCompat.DayNight.Dialog.Alert"
+    android:background="?attr/cardBackground">
 
 </LinearLayout>

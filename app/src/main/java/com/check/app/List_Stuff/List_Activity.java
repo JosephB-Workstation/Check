@@ -145,7 +145,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
 
         else if(intent.getIntExtra("mode", 1) == 1){ // if the list was created, instead of loaded.
             listID = FirebaseDatabase.getInstance().getReference().child("user").child(FirebaseAuth.getInstance().getUid()).child("list").push().getKey();
-            Toolbar toolbar = findViewById(R.id.listToolBar); // list toolbar grabbed
+            toolbar = findViewById(R.id.listToolBar); // list toolbar grabbed
             listName = intent.getStringExtra("listName"); //grabs the name from MainActivity, which got it from the dialog
             toolbar.setTitle(listName);// sets the local string variable to be the title of the toolbar.
             listCategory = "None"; // temp fix for nulls
@@ -379,9 +379,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         minuteUpdateReciever = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                for(int i = 0; i < taskList.size(); i++){
-                    if(taskList.get(i).hasTimer()){lTaskAdapter.notifyItemChanged(i);}
-                }
+                lTaskAdapter.notifyDataSetChanged();
             }
         };
         registerReceiver(minuteUpdateReciever, intentFilter);
