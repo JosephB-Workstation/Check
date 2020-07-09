@@ -16,6 +16,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.DialogFragment;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 public class Settings_Dialog extends DialogFragment {
     private Boolean darkMode;
     private Button darkModeToggle;
@@ -30,7 +32,14 @@ public class Settings_Dialog extends DialogFragment {
             darkMode = true;
         } else darkMode = false;
         //if(darkMode) AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(new ContextThemeWrapper(context, R.style.darkTheme));
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+        //AlertDialog.Builder dialogBuilder1 = new AlertDialog.Builder(getActivity());
+
+        MaterialAlertDialogBuilder dialogBuilder = null;
+        if(darkMode){
+        dialogBuilder = new MaterialAlertDialogBuilder(getActivity(), R.style.DarkDialogCustom);}
+        else {dialogBuilder = new MaterialAlertDialogBuilder(getActivity(), R.style.LightDialogCustom);}
+
+
         LayoutInflater inflater = requireActivity().getLayoutInflater(); // inflater for custom layout
         View view = inflater.inflate(R.layout.dialog_settings, null); // view for the custom inflater, and setting the layout file.
 
@@ -70,8 +79,8 @@ public class Settings_Dialog extends DialogFragment {
                     }
                 });
         darkModeToggle = view.findViewById(R.id.darkButton);
-        AlertDialog dialog = dialogBuilder.create();
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(R.attr.cardBackground));
+        androidx.appcompat.app.AlertDialog dialog = dialogBuilder.create();
+       // dialog.getWindow().setBackgroundDrawable(new ColorDrawable(R.attr.cardBackground));
         return dialog;
     }
 

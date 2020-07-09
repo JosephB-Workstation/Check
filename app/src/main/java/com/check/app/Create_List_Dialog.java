@@ -12,12 +12,16 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.DialogFragment;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 
 
 public class Create_List_Dialog extends DialogFragment {
+    private Boolean darkMode;
     private EditText listNameEntry;
     private CreateListListener listListener;
 
@@ -25,7 +29,17 @@ public class Create_List_Dialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity()); //custom layout
+        //dark mode handle
+        if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
+            darkMode = true;
+        }else darkMode = false;
+
+        MaterialAlertDialogBuilder dialogBuilder = null;
+        if(darkMode){
+            dialogBuilder = new MaterialAlertDialogBuilder(getActivity(), R.style.DarkDialogCustom);}
+        else {dialogBuilder = new MaterialAlertDialogBuilder(getActivity(), R.style.LightDialogCustom);}
+
+        //AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity()); //custom layout
         LayoutInflater inflater = requireActivity().getLayoutInflater(); // inflater for custom layout
         View view = inflater.inflate(R.layout.dialog_create_list, null); // view for the custom inflater, and setting the layout file.
         dialogBuilder.setView(view)

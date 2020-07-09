@@ -4,13 +4,17 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:theme="@style/Theme.AppCompat.DayNight.Dialog.Alert">
+    android:background="?attr/backgroundColor"
+    android:padding="5dp">
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter List Name"
         android:inputType="text"
+        android:textColor="?attr/textColor"
+        android:textColorHint="?attr/textColor"
+        android:backgroundTint="?attr/tintColor"
         android:autofillHints="List name"
         android:id="@+id/listName">
 

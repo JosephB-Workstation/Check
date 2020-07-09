@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/cardBackground">
+    android:background="?attr/backgroundColor"
+    android:padding="5dp">
 
     <Button
         android:id="@+id/darkButton"
@@ -13,5 +14,6 @@
         android:layout_height="wrap_content"
         android:text="Dark Mode: False"
         android:background="?attr/buttonColor"
-        android:textColor="?attr/textColor"/>
+        android:textColor="?attr/textColor"
+        android:padding="5dp"/>
 </RelativeLayout>

@@ -2,6 +2,7 @@ package com.check.app.List_Stuff;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -64,6 +65,9 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
+            setTheme(R.style.darkTheme);
+        }else setTheme(R.style.AppTheme);
         setContentView(R.layout.activity_list_view); //activity view set
         Intent intent = getIntent(); // prepares an intent for later use
         pref = getApplicationContext().getSharedPreferences("Check", 0);
@@ -330,19 +334,37 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
     @Override
     public void attachColorSettings(int colorId) { // listener for the list color swap (List_Color_Settings)
         backgroundColorId = colorId;
-        if(colorId == 0) setBackground(R.drawable.background_yellow);
-        else if(colorId == 1) setBackground(R.drawable.background_blue);
-        else if(colorId == 2) setBackground(R.drawable.background_green);
-        else if(colorId == 3) setBackground(R.drawable.background_purple);
+
+        if(colorId == 0) {
+            if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){setBackground(R.drawable.dbackground_yellow);}
+            else {setBackground(R.drawable.background_yellow);}}
+        else if(colorId == 1){
+            if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {setBackground(R.drawable.dbackground_blue);}
+            else {setBackground(R.drawable.background_blue);}}
+        else if(colorId == 2) {
+            if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){setBackground(R.drawable.dbackground_green);}
+        else {setBackground(R.drawable.background_green);}}
+        else if(colorId == 3) {
+            if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {setBackground(R.drawable.dbackground_purple);}
+            else {setBackground(R.drawable.background_purple);}}
+
         if(listInfo.containsKey("background")){listInfo.remove("background");}
         listInfo.put("background", backgroundColorId);
     }
     public void attachColorSettings(double colorId){
         backgroundColorId = colorId;
-        if(colorId == 0) setBackground(R.drawable.background_yellow);
-        else if(colorId == 1) setBackground(R.drawable.background_blue);
-        else if(colorId == 2) setBackground(R.drawable.background_green);
-        else if(colorId == 3) setBackground(R.drawable.background_purple);
+        if(colorId == 0) {
+            if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){setBackground(R.drawable.dbackground_yellow);}
+            else {setBackground(R.drawable.background_yellow);}}
+        else if(colorId == 1){
+            if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {setBackground(R.drawable.dbackground_blue);}
+            else {setBackground(R.drawable.background_blue);}}
+        else if(colorId == 2) {
+            if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){setBackground(R.drawable.dbackground_green);}
+            else {setBackground(R.drawable.background_green);}}
+        else if(colorId == 3) {
+            if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {setBackground(R.drawable.dbackground_purple);}
+            else {setBackground(R.drawable.background_purple);}}
         if(listInfo.containsKey("background")){listInfo.remove("background");}
         listInfo.put("background", backgroundColorId);
     }

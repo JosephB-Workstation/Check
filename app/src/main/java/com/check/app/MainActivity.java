@@ -72,14 +72,19 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
     private ArrayList<ListObject> categoryFilteredLists;
     private ArrayList<String> categories;
     private ArrayList<String> listIDs;
-    SharedPreferences pref;
-    EditText searchBar;
-    Spinner categorySpinner;
+    private SharedPreferences pref;
+    private EditText searchBar;
+    private Spinner categorySpinner;
+    private Settings_Loader settings_loader;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        settings_loader = new Settings_Loader(this);
+        if(settings_loader.loadNightModeState())   {AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);}
+        else {AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);}
+
         if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
             setTheme(R.style.darkTheme);
         }else setTheme(R.style.AppTheme);
@@ -335,6 +340,7 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
         if(!darkMode){
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        settings_loader.setNightModeState(darkMode);
         recreate();
     }
 
