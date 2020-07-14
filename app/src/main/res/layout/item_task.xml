@@ -39,9 +39,19 @@
         <TextView
             android:id="@+id/taskName"
             android:layout_width="400dp"
-            android:layout_height="50dp"
+            android:layout_height="20dp"
             android:layout_marginStart="5dp"
             android:text="empty task error!"
+            android:textColor="?attr/textColor">
+        </TextView>
+
+        <TextView
+            android:id="@+id/taskTime"
+            android:layout_width="400dp"
+            android:layout_height="20dp"
+            android:layout_below="@id/taskName"
+            android:layout_marginStart="5dp"
+            android:text="empty time error!"
             android:textColor="?attr/textColor">
 
         </TextView>

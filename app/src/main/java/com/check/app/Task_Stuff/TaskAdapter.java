@@ -46,6 +46,57 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHo
     @Override
     public void onBindViewHolder(@NonNull TaskListViewHolder holder, final int position) {
         holder.vhTask.setText(taskList.get(position).getTaskName()); //sets the name-text for each task in the list
+        int state = taskList.get(position).getTimerState();
+        if(state == 0) holder.vhTime.setText(""); // if there is no timer function, then there is no need to show a time that doesn't exist
+        else if(state == 1) { // grabs the due date, and formats it into text
+            Calendar taskTime = taskList.get(position).getCalendar();
+            int year = taskTime.get(taskTime.YEAR) ;
+            int month = taskTime.get(taskTime.MONTH);
+            int day = taskTime.get(taskTime.DAY_OF_MONTH);
+            int hour = taskTime.get(taskTime.HOUR_OF_DAY);
+            int minute = taskTime.get(taskTime.MINUTE);
+            StringBuilder dayView = new StringBuilder().append(month +1).append("/").append(day).append("/").append(year).append(" ");
+            StringBuilder timeView = TimeBuilder(hour, minute);
+            holder.vhTime.setText("Due on: " + dayView.toString() + "at " + timeView.toString());
+            ;}
+        else if (state == 2) {
+            Calendar taskTime = taskList.get(position).getCalendar();
+            int year = taskTime.get(taskTime.YEAR) ;
+            int month = taskTime.get(taskTime.MONTH);
+            int day = taskTime.get(taskTime.DAY_OF_MONTH);
+            int hour = taskTime.get(taskTime.HOUR_OF_DAY);
+            int minute = taskTime.get(taskTime.MINUTE);
+            StringBuilder dayView = new StringBuilder().append(month +1).append("/").append(day).append("/").append(year).append(" ");
+            StringBuilder timeView = TimeBuilder(hour, minute);
+
+            int recurCode = taskList.get(position).getRecursionCode();
+            String recursionString = null;
+            switch(recurCode){
+                case 0:
+                    recursionString = "Annually";
+                    break;
+                case 1:
+                    recursionString = "Daily";
+                    break;
+                case 2:
+                    recursionString = "Weekly";
+                    break;
+                case 3:
+                    recursionString = "Bi-Weekly";
+                    break;
+                case 4:
+                    recursionString = "Monthly";
+                    break;
+                case 5:
+                    recursionString = "Quarterly";
+                    break;
+                default:
+                    recursionString = "NO RECURSION CODE ERROR WITHIN TASKADAPTER!";
+                    break;
+            }
+            holder.vhTime.setText("Resets on: " + dayView.toString() + "at " + timeView.toString() + ". " + recursionString);
+
+        }
         holder.vhCheckBoxState.setImageResource(taskList.get(position).getCheckboxStateSource()); // checks if each task is checked or not, displays image accordingly.
         holder.vhCheckbox.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,7 +172,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHo
     }
 
     public class TaskListViewHolder extends RecyclerView.ViewHolder{
-        TextView vhTask; //vh is for view holder.
+        TextView vhTask, vhTime; //vh is for view holder.
         Button vhCheckbox;
         Button vhEditButton;
         ImageView vhCheckBoxState;
@@ -129,10 +180,21 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHo
         TaskListViewHolder(View view){
             super(view);
             vhTask = view.findViewById(R.id.taskName);
+            vhTime = view.findViewById(R.id.taskTime);
             vhCheckbox = view.findViewById(R.id.checkButton);
             vhCheckBoxState = view.findViewById(R.id.checkImage);
             taskItem = view.findViewById(R.id.layout);
             vhEditButton = view.findViewById(R.id.editTask);
         }
+    }
+
+    private StringBuilder TimeBuilder(int hour, int minute){
+        StringBuilder timeBuilder = new StringBuilder();
+        if(hour < 10) timeBuilder.append("0");
+        timeBuilder.append(hour)
+                .append(":");
+        if(minute < 10) timeBuilder.append("0");
+        timeBuilder.append(minute);
+        return timeBuilder;
     }
 }
