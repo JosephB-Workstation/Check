@@ -54,7 +54,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
     private RecyclerView lTasks; //First three variables are necessary for recycler view
     private RecyclerView.Adapter lTaskAdapter;
     private RecyclerView.LayoutManager lTaskLayoutManager;
-    private String listName, listCategory, listID; // A string to store the list's name
+    private String listName, listCategory, listID, mediaURI; // A string to store the list's name
     private ArrayList<TaskObject> taskList; // An arraylist to store tasks
     private LinearLayout background; // a linear layout variable so I can change list backgrounds
     private int storagePointer;
@@ -99,7 +99,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
                 listID = FirebaseDatabase.getInstance().getReference().child("user").child(FirebaseAuth.getInstance().getUid()).child("list").push().getKey();
             }
 
-            if(pref2.contains(listID) && !(intent.getBooleanExtra("lastUpdate", false))){ // if the list is saved locally
+            if(pref2.contains(listID) && !(intent.getBooleanExtra("lastUpdate", false))){ // if the list is saved locally and the local version isn't older than the online version
             savedMap = pref2.getString(listID, "");
             listLoader(savedMap);
             } else { // if load is online only at the moment
@@ -139,6 +139,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
 
             }
 
+            mediaURI = intent.getStringExtra("mediaURI");
 
             toolbar = findViewById(R.id.listToolBar); // list toolbar grabbed
             toolbar.setTitle(listName);// sets the local string variable to be the title of the toolbar.
@@ -217,6 +218,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
                 bundle.putString("category", listCategory);
                 bundle.putString("name", listName);
                 bundle.putDouble("colorId", backgroundColorId);
+                bundle.putString("listId", listID);
                 editDialog.setArguments(bundle);
                 editDialog.show(getSupportFragmentManager(), "Edit List");
                 return true;
@@ -396,6 +398,16 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
                     e.printStackTrace();
                 }
             }}
+        else if(colorId == -1){
+            try {
+                URL url = new URL(mediaURI);
+                Bitmap bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                Drawable image = new BitmapDrawable(getApplicationContext().getResources(), bitmap);
+                background.setBackground(image);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         if(listInfo.containsKey("background")){listInfo.remove("background");}
         listInfo.put("background", backgroundColorId);
     }
@@ -449,7 +461,8 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
              Calendar date = Calendar.getInstance();
 
 
-             ListObject currentList = new ListObject(listNameSave, listCategorySave, listBackground, listIDSave, date);
+             if(mediaURI == null){mediaURI = "none";}
+             ListObject currentList = new ListObject(listNameSave, listCategorySave, listBackground, listIDSave, date, mediaURI);
              HashMap<String, ListObject> finalList = new HashMap<String, ListObject>();
              finalList.put("list", currentList);
 
@@ -480,15 +493,51 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
     }
 
     @Override
-    public void attachListSettings(String category, String name) {
+    public void attachListSettings(String category, String name, String mediaID, String mediaURI, double colorId, boolean imagebackgroundupdate) {
         listCategory = category;
         listName = name;
-        if(listInfo.containsKey("category")){listInfo.remove("category");}
-        if(listInfo.containsKey("name")){listInfo.remove("name");}
+        if (listInfo.containsKey("category")) {
+            listInfo.remove("category");
+        }
+        if (listInfo.containsKey("name")) {
+            listInfo.remove("name");
+        }
         listInfo.put("category", listCategory);
         listInfo.put("name", listName);
         toolbar.setTitle(listName);
+
+        if (imagebackgroundupdate) {
+            backgroundColorId = colorId;
+            if (listInfo.containsKey("background")) {
+                listInfo.remove("background");
+            }
+            listInfo.put("background", backgroundColorId);
+
+            if (!mediaID.equals("None")) {
+                if (listInfo.containsKey("mediaID")) {
+                    listInfo.remove("mediaID");
+                    listInfo.put("mediaID", mediaID);
+                } else {
+                    listInfo.put("mediaID", "None");
+                }
+            }
+            if (!mediaURI.equals("None")) {
+                if (listInfo.containsKey("mediaURI")) {
+                    listInfo.remove("mediaURI");
+                }
+                listInfo.put("mediaURI", mediaURI);
+                try {
+                    URL url = new URL(mediaURI);
+                    Bitmap bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                    Drawable image = new BitmapDrawable(getApplicationContext().getResources(), bitmap);
+                    background.setBackground(image);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
+
 
     private void readData(DatabaseReference ref, final OnGetDataListener listener){
         listener.onStart();
@@ -514,16 +563,6 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         finish();
     }
 
-/*    private void notificationMaker(){
-        Intent notificationIntent = new Intent(List_Activity.this, ReminderBroadcast.class);
-        notificationIntent.putExtra("id", taskList.get(i).getTaskID());
-        notificationIntent.putExtra("listName", listName);
-        notificationIntent.putExtra("taskName", taskList.get(i).getTaskName());
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(List_Activity.this, taskList.get(i).getTaskID(), notificationIntent, 0);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManager.cancel(pendingIntent);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, taskList.get(i).getCalendar().getTimeInMillis(), pendingIntent);
-    }*/
 
     public interface OnGetDataListener {
         void onSuccess(DataSnapshot dataSnapshot);

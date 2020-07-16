@@ -7,14 +7,14 @@ import java.util.HashMap;
 
 public class ListObject {
     private HashMap<String, Object> listData;
-    private String listName, listCategory;
+    private String listName, listCategory, mediaURI;
     private int listSize;
     private double listBackgroundId;
     private String listID, listOwnerId;
     private Calendar lastEdit;
     private boolean newerOnline;
 
-    ListObject(String name, String category, double listBackgroundId, String listID, Calendar lastEdit){
+    ListObject(String name, String category, double listBackgroundId, String listID, Calendar lastEdit, String MediaURI){
         listName = name;
         listCategory = category;
         this.listBackgroundId = listBackgroundId;
@@ -22,6 +22,7 @@ public class ListObject {
         this.lastEdit = lastEdit;
         newerOnline = false;
         listOwnerId = FirebaseAuth.getInstance().getUid();
+        this.mediaURI = MediaURI;
     }
 
 
@@ -44,6 +45,8 @@ public class ListObject {
     public boolean getNewerOnline(){return newerOnline;}
 
     public Calendar getLastEdit() {return lastEdit;}
+
+    public String getMediaURI(){return mediaURI;}
 
     public void isNewerOnline(){newerOnline = true; }
 

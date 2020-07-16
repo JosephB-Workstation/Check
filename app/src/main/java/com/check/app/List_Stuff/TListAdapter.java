@@ -53,6 +53,7 @@ public class TListAdapter extends RecyclerView.Adapter<TListAdapter.ListViewHold
                 intent.putExtra("listCategory", listOfLists.get(position).getListCategory());
                 intent.putExtra("listID", listOfLists.get(position).getListID());
                 intent.putExtra("lastUpdate", onlineUp);
+                intent.putExtra("mediaURI", listOfLists.get(position).getMediaURI());
                 v.getContext().startActivity(intent);
             }
         });
