@@ -24,7 +24,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 public class List_Edit_Settings extends DialogFragment  implements List_Color_Settings.ColorSettingsListListener{
     private double colorId;
     private String category, name;
-    private Button backgroundPicker;
+    private Button backgroundPicker, backgroundIPicker;
     private EditText categorySelector, namePicker;
     private ListEditListener listEditListener;
     private Boolean darkMode;
@@ -46,6 +46,7 @@ public class List_Edit_Settings extends DialogFragment  implements List_Color_Se
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_list_settings, null);//bureaucracy of setting up a dialog
         backgroundPicker =  view.findViewById(R.id.backgroundEditor);
+        backgroundIPicker = view.findViewById(R.id.backgroundImage);
         categorySelector = view.findViewById(R.id.categoryEditor);
         namePicker = view.findViewById(R.id.nameEditor);
 

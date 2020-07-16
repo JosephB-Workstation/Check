@@ -14,7 +14,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,6 +42,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -70,6 +78,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         }else setTheme(R.style.AppTheme);
         setContentView(R.layout.activity_list_view); //activity view set
         Intent intent = getIntent(); // prepares an intent for later use
+        background = findViewById(R.id.listLayout);
         pref = getApplicationContext().getSharedPreferences("Check", 0);
         editor = pref.edit();
         pref2 = getApplicationContext().getSharedPreferences("Check-d", 0);
@@ -77,6 +86,8 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         listInfo = new HashMap<String, Object>();
         listMap = new HashMap<String, TaskObject>();
         String savedMap;
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
         taskListStarter();
 
 
@@ -346,7 +357,17 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         else {setBackground(R.drawable.background_green);}}
         else if(colorId == 3) {
             if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {setBackground(R.drawable.dbackground_purple);}
-            else {setBackground(R.drawable.background_purple);}}
+            else {
+                //setBackground(R.drawable.background_purple);
+                try {
+                    URL url = new URL("https://images.unsplash.com/photo-1577971828613-9872f39c0825?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80");
+                    Bitmap bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                    Drawable image = new BitmapDrawable(getApplicationContext().getResources(), bitmap);
+                    background.setBackground(image);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }}
 
         if(listInfo.containsKey("background")){listInfo.remove("background");}
         listInfo.put("background", backgroundColorId);
@@ -364,7 +385,17 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
             else {setBackground(R.drawable.background_green);}}
         else if(colorId == 3) {
             if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {setBackground(R.drawable.dbackground_purple);}
-            else {setBackground(R.drawable.background_purple);}}
+            else {
+                //setBackground(R.drawable.background_purple);
+                try {
+                    URL url = new URL("https://images.unsplash.com/photo-1577971828613-9872f39c0825?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80");
+                    Bitmap bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                    Drawable image = new BitmapDrawable(getApplicationContext().getResources(), bitmap);
+                    background.setBackground(image);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }}
         if(listInfo.containsKey("background")){listInfo.remove("background");}
         listInfo.put("background", backgroundColorId);
     }

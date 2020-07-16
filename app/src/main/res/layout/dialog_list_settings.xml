@@ -43,15 +43,29 @@
 
     </EditText>
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        android:text="Background Settings            "
+        android:text="Background Settings"
         android:padding="3dp"
         android:id="@+id/backgroundEditor"
         android:textColor="?attr/textColor">
-
     </Button>
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/backgroundEditor"
+            android:text="Background image"
+            android:background="@android:color/transparent"
+            android:paddingLeft="5dp"
+            android:id="@+id/backgroundImage"
+            android:textColor="?attr/textColor">
+
+        </Button>
+    </RelativeLayout>
 </LinearLayout>
