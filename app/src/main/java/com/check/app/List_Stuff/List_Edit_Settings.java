@@ -35,7 +35,7 @@ public class List_Edit_Settings extends DialogFragment  implements List_Color_Se
     private Button backgroundPicker, backgroundIPicker;
     private EditText categorySelector, namePicker;
     private ListEditListener listEditListener;
-    private Boolean darkMode, imageBackground;
+    private Boolean darkMode, imageBackground, uploading;
     private String imageURI;
     private int PICK_IMAGE_INTENT = 1;
 
@@ -82,6 +82,7 @@ public class List_Edit_Settings extends DialogFragment  implements List_Color_Se
 
         categorySelector.setText(category);
         namePicker.setText(name);
+        uploading = false;
         backgroundPicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,6 +106,11 @@ public class List_Edit_Settings extends DialogFragment  implements List_Color_Se
                 .setPositiveButton("Save settings", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        if(uploading){
+                            Toast toast = Toast.makeText(getActivity(), "Image upload canceled!", Toast.LENGTH_LONG);
+                            toast.show();
+                        }
+
                         if(!categorySelector.getText().toString().trim().isEmpty()){
                             category = categorySelector.getText().toString();
                         }else{category = "None";}
@@ -153,7 +159,7 @@ public class List_Edit_Settings extends DialogFragment  implements List_Color_Se
                     toast.show();
                     imageURI = data.getData().toString();
                     final StorageReference filepath = FirebaseStorage.getInstance().getReference().child("list").child(listID);
-                    
+                    uploading = true;
                     UploadTask uploadTask = filepath.putFile(Uri.parse(imageURI));
 
                     uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -165,8 +171,7 @@ public class List_Edit_Settings extends DialogFragment  implements List_Color_Se
                                     mediaURI = uri.toString();
                                     colorId = -1;
                                     imageBackground = true;
-                                    Toast toast = Toast.makeText(getActivity(), "Image uploaded! Will update when you confirm the dialog box!", Toast.LENGTH_SHORT);
-                                    toast.show();
+                                    uploading = false;
                                 }
                             });
                         }
