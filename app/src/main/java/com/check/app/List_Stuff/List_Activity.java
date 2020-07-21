@@ -526,6 +526,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
                     listInfo.remove("mediaURI");
                 }
                 listInfo.put("mediaURI", mediaURI);
+                this.mediaURI = mediaURI;
                 try {
                     URL url = new URL(mediaURI);
                     Bitmap bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());

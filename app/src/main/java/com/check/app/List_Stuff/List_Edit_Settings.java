@@ -153,7 +153,9 @@ public class List_Edit_Settings extends DialogFragment  implements List_Color_Se
                     toast.show();
                     imageURI = data.getData().toString();
                     final StorageReference filepath = FirebaseStorage.getInstance().getReference().child("list").child(listID);
+                    
                     UploadTask uploadTask = filepath.putFile(Uri.parse(imageURI));
+
                     uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {

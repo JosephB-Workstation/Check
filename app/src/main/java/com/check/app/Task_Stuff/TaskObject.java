@@ -3,6 +3,7 @@ package com.check.app.Task_Stuff;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.check.app.R;
 
@@ -130,22 +131,47 @@ public class TaskObject implements Serializable {
     public void setCheckBoxState(){ // on - click setting of checkboxes
         if(checkboxState == 0 || checkboxState == 2){
             checkboxState = 1;
-            checkboxStateSource = R.drawable.ischecked;
+            if(!(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)){
+                checkboxStateSource = R.drawable.ischecked;
+            } else checkboxStateSource = R.drawable.dischecked;
+
 
         }
         else if(checkboxState == 1){
             checkboxState = 0;
-            checkboxStateSource = R.drawable.notchecked;
+            if(!(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)){
+                checkboxStateSource = R.drawable.notchecked;
+            } else checkboxStateSource = R.drawable.dnotchecked;
+
         }
     }
 
     public void setLateCheckBoxState(){ //Due date timer command
         if(checkboxState == 0){ // if check box is empty, the task is late. Give it a red x
             checkboxState = 2;
-            checkboxStateSource = R.drawable.islate;
+            if(!(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)){
+                checkboxStateSource = R.drawable.islate;
+            } else checkboxStateSource = R.drawable.dislate;
+
         }
         dueTimer = null; //deletes timer after use
         timerState = 0;
+    }
+
+    public void updateCheckBoxSource() { // for when you swap between light or dark mode.
+        if (checkboxState == 0) {
+            if (!(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)) {
+                checkboxStateSource = R.drawable.ischecked;
+            } else checkboxStateSource = R.drawable.dischecked;
+        } else if (checkboxState == 1) {
+            if (!(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)) {
+                checkboxStateSource = R.drawable.notchecked;
+            } else checkboxStateSource = R.drawable.dnotchecked;
+        } else if (checkboxState == 2) {
+            if (!(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)) {
+                checkboxStateSource = R.drawable.islate;
+            } else checkboxStateSource = R.drawable.dislate;
+        }
     }
 
     public void setRecursionCheckBoxState(){ //Recurring timer command
@@ -304,6 +330,7 @@ public class TaskObject implements Serializable {
                 dueTimer.schedule(dueExecutor, dueDate.getTime());
             }
         }
+        updateCheckBoxSource();
     }
     public boolean hasTimer(){
         if(timerState == 1) {
