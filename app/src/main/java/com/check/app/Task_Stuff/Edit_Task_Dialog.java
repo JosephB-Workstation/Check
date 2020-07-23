@@ -138,7 +138,7 @@ public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog
             minute = defaultCalendar.get(defaultCalendar.MINUTE);
             dayViewer.setText(new StringBuilder().append(this.month +1).append("/").append(this.day).append("/").append(this.year).append(" "));
             TimeBuilder();
-            mdueToggle.setText("Timer Functions: off");
+            mdueToggle.setText("Timer: off");
             timerToggle = 0;
             mrecursionChanger.setVisibility(View.INVISIBLE);
         }

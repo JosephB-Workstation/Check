@@ -10,7 +10,7 @@
         <item name="cardBackground">#fcfcfc</item>
         <item name="textColor">#000000</item>
         <item name="tintColor">#000000</item>
-        <item name="buttonColor">#a5a5a5</item>
+        <item name="buttonColor">#dbdbdb</item>
         <item name="colorBackgroundFloating"> #fcfcfc </item>
         <item name="android:windowAnimationStyle"> @style/WindowAnimation</item>
 
@@ -67,12 +67,12 @@
 
     <style name="LPositiveButtonStyle" parent="@style/Widget.MaterialComponents.Button">
         <item name="android:textColor">#000000</item>
-        <item name="backgroundTint">#a5a5a5</item>
+        <item name="backgroundTint">#dbdbdb</item>
         <item name="android:textSize"> 18sp</item>
     </style>
     <style name="LNegativeButtonStyle" parent="@style/Widget.MaterialComponents.Button">
         <item name="android:textColor">#000000</item>
-        <item name="backgroundTint">#a5a5a5</item>
+        <item name="backgroundTint">#dbdbdb</item>
         <item name="android:textSize"> 18sp</item>
     </style>
 

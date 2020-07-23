@@ -98,10 +98,10 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Set due date"
-        android:background="@android:color/transparent"
+        android:text="Set date"
         android:layout_marginTop="5dp"
         android:textColor="?attr/textColor"
+        android:backgroundTint="?attr/buttonColor"
         android:id="@+id/dueDateButton">
 
     </Button>
@@ -109,11 +109,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/dueDateButton"
-        android:text="Set due time"
-        android:background="@android:color/transparent"
+        android:text="Set time"
         android:layout_marginTop="5dp"
         android:textColor="?attr/textColor"
-        android:layout_marginLeft="15dp"
+        android:backgroundTint="?attr/buttonColor"
+        android:layout_marginLeft="5dp"
         android:id="@+id/dueTimeButton">
 
     </Button>
@@ -122,11 +122,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/dueTimeButton"
-        android:text="Timer Functions: off"
-        android:background="@android:color/transparent"
-        android:layout_marginTop="5dp"
+        android:text="Timer: off"
         android:textColor="?attr/textColor"
-        android:layout_marginLeft="15dp"
+        android:backgroundTint="?attr/buttonColor"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
         android:id="@+id/dueToggleButton">
 
     </Button>
@@ -135,9 +135,9 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
         android:text="Recursion Rate"
         android:textColor="?attr/textColor"
+        android:backgroundTint="?attr/buttonColor"
         android:id="@+id/recursionRateButton">
 
     </Button>
