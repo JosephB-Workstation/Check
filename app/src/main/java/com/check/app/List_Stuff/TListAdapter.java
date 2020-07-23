@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,7 +29,7 @@ public class TListAdapter extends RecyclerView.Adapter<TListAdapter.ListViewHold
     @NonNull
     @Override
     public ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list, null, false);
+        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card, null, false);
         RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutView.setLayoutParams(lp); //parameters here stop the recycler view from going crazy. and tell it what it's working with.
 
@@ -40,8 +41,10 @@ public class TListAdapter extends RecyclerView.Adapter<TListAdapter.ListViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ListViewHolder holder, final int position) {
-                holder.vhEntryButton.setText(listOfLists.get(position).getListName());
-                holder.vhEntryButton.setOnClickListener(new View.OnClickListener(){
+                holder.vhListName.setText(listOfLists.get(position).getListName());
+                holder.vhTags.setText(listOfLists.get(position).getTagString());
+                holder.vhTime.setText(listOfLists.get(position).getTimeString());
+                holder.vhCardButton.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) { // code for opening lists to the list activity.
@@ -73,12 +76,14 @@ public class TListAdapter extends RecyclerView.Adapter<TListAdapter.ListViewHold
     }
 
     public class ListViewHolder extends RecyclerView.ViewHolder{
-        TextView vhListName;
-        Button vhEntryButton;
+        TextView vhListName, vhTags, vhTime;
+        CardView vhCardButton;
         ListViewHolder(View view){
             super(view);
-            vhListName = view.findViewById(R.id.listName);
-            vhEntryButton = view.findViewById(R.id.listButton);
+            vhListName = view.findViewById(R.id.listNameMark);
+            vhTags = view.findViewById(R.id.listTagMark);
+            vhTime = view.findViewById(R.id.listTimeMark);
+            vhCardButton = view.findViewById(R.id.listCard);
         }
     }
 }

@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -210,14 +211,13 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
     }
 
     private void ListStarter(){ // starts recycler view.
-        listOfLists = new ArrayList<>();//init arraylist
-        lLists = findViewById(R.id.listOfLists); //recycler view pairing
-        lLists.setNestedScrollingEnabled(false); // removes scary scroll wheel
-        lLists.setHasFixedSize(false); // allows for the better scroll wheel to work
-        lListLayoutManager = new LinearLayoutManager(getApplicationContext(), RecyclerView.VERTICAL, false); // layout manager that handles which way the recycler view appends items to a list
-        lLists.setLayoutManager(lListLayoutManager);// configures layout manager for list page
-        lListAdapter = new TListAdapter(listOfLists, this.getSupportFragmentManager()); // constructor for class: TaskAdapter, which handles checkboxes and edits.
-        lLists.setAdapter(lListAdapter);//configures adapter to work here.
+        listOfLists = new ArrayList<>();
+        lLists = findViewById(R.id.listOfLists);
+        lListLayoutManager = new GridLayoutManager(this, 2);
+        lLists.setLayoutManager(lListLayoutManager);
+        lListAdapter = new TListAdapter(listOfLists, this.getSupportFragmentManager());
+        lLists.setAdapter(lListAdapter);
+        
     }
 
     private void listUpdater(){

@@ -56,6 +56,45 @@ public class ListObject {
 
     public void setListBackgroundId(Double value){listBackgroundId = value;}
 
+
+    //string funcs
+
+    public String getTagString(){
+        String tagString;
+        if(listCategory != null){
+            tagString = ("Tag: " + listCategory); }
+        else{
+            tagString = "No tag!";
+        }
+        return tagString;
+    }
+
+    public String getTimeString(){
+        String timeString = null;
+        if(lastEdit != null){
+
+            int year = lastEdit.get(lastEdit.YEAR) ;
+            int month = lastEdit.get(lastEdit.MONTH);
+            int day = lastEdit.get(lastEdit.DAY_OF_MONTH);
+            int hour = lastEdit.get(lastEdit.HOUR_OF_DAY);
+            int minute = lastEdit.get(lastEdit.MINUTE);
+            StringBuilder dayView = new StringBuilder().append(month +1).append("/").append(day).append("/").append(year).append(" ");
+            StringBuilder timeView = TimeBuilder(hour, minute);
+            timeString = dayView.toString() + timeView.toString();
+        } else timeString = "Never opened!";
+        return timeString;
+    }
+
+
+    private StringBuilder TimeBuilder(int hour, int minute){
+        StringBuilder timeBuilder = new StringBuilder();
+        if(hour < 10) timeBuilder.append("0");
+        timeBuilder.append(hour)
+                .append(":");
+        if(minute < 10) timeBuilder.append("0");
+        timeBuilder.append(minute);
+        return timeBuilder;
+    }
 }
 
 

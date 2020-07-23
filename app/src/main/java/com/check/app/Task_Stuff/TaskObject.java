@@ -327,6 +327,7 @@ public class TaskObject implements Serializable {
             };
             dueTimer.schedule(dueExecutor, dueDate.getTime());
         }
+            updateCheckBoxSource();
         }
         else if(timerState == 2){
             if(dueDate != null){
@@ -339,6 +340,7 @@ public class TaskObject implements Serializable {
                 };
                 dueTimer.schedule(dueExecutor, dueDate.getTime());
             }
+            updateCheckBoxSource();
         }
     }
     public boolean hasTimer(){
