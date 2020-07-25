@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements Create_List_Dialo
         lLists.setLayoutManager(lListLayoutManager);
         lListAdapter = new TListAdapter(listOfLists, this.getSupportFragmentManager());
         lLists.setAdapter(lListAdapter);
-        
+
     }
 
     private void listUpdater(){

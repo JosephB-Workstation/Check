@@ -6,6 +6,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:text="List Name: "
         android:textSize="20sp"
         android:textColor="?attr/textColor">
@@ -17,6 +18,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/nameEditor"
         android:hint="List Name here"
+        android:layout_margin="5dp"
         android:textColor="?attr/textColor"
         android:textColorHint="?attr/textColor"
         android:backgroundTint="?attr/tintColor">
@@ -27,6 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Sorting Category: "
+        android:layout_margin="5dp"
         android:textSize="20sp"
         android:textColor="?attr/textColor">
 
@@ -37,6 +40,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/categoryEditor"
         android:hint="Category name here"
+        android:layout_margin="5dp"
         android:textColor="?attr/textColor"
         android:textColorHint="?attr/textColor"
         android:backgroundTint="?attr/tintColor">
@@ -49,9 +53,11 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:text="Background Settings"
-        android:padding="3dp"
+        android:background="?attr/buttonColor"
+        android:text="Background color"
+        android:layout_marginTop="3dp"
+        android:layout_marginLeft="5dp"
+        android:textAllCaps="false"
         android:id="@+id/backgroundEditor"
         android:textColor="?attr/textColor">
     </Button>
@@ -61,9 +67,11 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/backgroundEditor"
             android:text="Background image"
-            android:background="@android:color/transparent"
-            android:paddingLeft="5dp"
+            android:background="?attr/buttonColor"
+            android:layout_marginTop="3dp"
+            android:layout_marginLeft="10dp"
             android:id="@+id/backgroundImage"
+            android:textAllCaps="false"
             android:textColor="?attr/textColor">
 
         </Button>

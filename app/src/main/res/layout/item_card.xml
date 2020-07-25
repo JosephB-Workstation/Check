@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     CardView:cardBackgroundColor="?attr/cardBackground"
     CardView:cardCornerRadius="8dp"
-    CardView:cardElevation="8dp"
+    CardView:cardElevation="12dp"
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
     android:id="@+id/listCard"
