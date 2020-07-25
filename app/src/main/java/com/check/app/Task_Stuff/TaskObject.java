@@ -31,9 +31,7 @@ public class TaskObject implements Serializable {
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.checkboxState = 0;
-        if(!(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)){
-            this.checkboxStateSource = R.drawable.notchecked;
-        } else this.checkboxStateSource = R.drawable.dnotchecked;
+        updateCheckBoxSource();
         this.timerState = 0;
         this.notificationListener = null;
 
@@ -46,9 +44,7 @@ public class TaskObject implements Serializable {
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.checkboxState = 0;
-        if(!(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)){
-            this.checkboxStateSource = R.drawable.notchecked;
-        } else this.checkboxStateSource = R.drawable.dnotchecked;
+        updateCheckBoxSource();
         this.dueDate = dueDate;
         this.timerState = timerState;
         this.notificationListener = null;
@@ -79,9 +75,7 @@ public class TaskObject implements Serializable {
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.checkboxState = 0;
-        if(!(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)){
-            this.checkboxStateSource = R.drawable.notchecked;
-        } else this.checkboxStateSource = R.drawable.dnotchecked;
+        updateCheckBoxSource();
         this.dueDate = dueDate;
         this.timerState = timerState;
         this.recursionCode = recursionTimerToggle;
@@ -137,32 +131,22 @@ public class TaskObject implements Serializable {
     public void setCheckBoxState(){ // on - click setting of checkboxes
         if(checkboxState == 0 || checkboxState == 2){
             checkboxState = 1;
-            if(!(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)){
-                checkboxStateSource = R.drawable.ischecked;
-            } else checkboxStateSource = R.drawable.dischecked;
-
-
+            updateCheckBoxSource();
         }
         else if(checkboxState == 1){
             checkboxState = 0;
-            if(!(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)){
-                checkboxStateSource = R.drawable.notchecked;
-            } else checkboxStateSource = R.drawable.dnotchecked;
-
+            updateCheckBoxSource();
         }
     }
 
     public void setLateCheckBoxState(){ //Due date timer command
         if(checkboxState == 0){ // if check box is empty, the task is late. Give it a red x
             checkboxState = 2;
-            if(!(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)){
-                checkboxStateSource = R.drawable.islate;
-            } else checkboxStateSource = R.drawable.dislate;
+            updateCheckBoxSource();
 
         }
         dueTimer = null; //deletes timer after use
         timerState = 0;
-        updateCheckBoxSource();
     }
 
     public void updateCheckBoxSource() { // for when you swap between light or dark mode.
@@ -184,9 +168,7 @@ public class TaskObject implements Serializable {
     public void setRecursionCheckBoxState(){ //Recurring timer command
         if(checkboxState == 1){ // if item is checked off, we are unchecking it
             checkboxState = 0;
-            if (!(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)) {
-                checkboxStateSource = R.drawable.notchecked;
-            } else checkboxStateSource = R.drawable.dnotchecked;
+            updateCheckBoxSource();
         }
         year = dueDate.get(dueDate.YEAR) ; //ensures that these fields have the current recursion date's time, as it wouldn't if recursion was edited in. Without this, system would crash.
         month = dueDate.get(dueDate.MONTH);

@@ -190,7 +190,7 @@ public class Edit_Task_Dialog extends DialogFragment implements DatePickerDialog
                     timerToggle = 0;
                     mrecursionChanger.setVisibility(View.INVISIBLE);
                     dataholder.setVisibility(View.INVISIBLE);
-                    mdueToggle.setText("Timer Functions: off");
+                    mdueToggle.setText("Timer: off");
                 }
             }
         });
