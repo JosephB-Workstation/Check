@@ -1,23 +1,20 @@
 package com.check.app.Task_Stuff;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.check.app.List_Stuff.List_Activity;
 import com.check.app.R;
 
 import java.util.ArrayList;
@@ -34,7 +31,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHo
     @NonNull
     @Override
     public TaskListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_task, null, false);
+        View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_taskcard, null, false);
         RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutView.setLayoutParams(lp); //parameters here stop the recycler view from going crazy. and tell it what it's working with.
 
@@ -46,8 +43,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHo
     @Override
     public void onBindViewHolder(@NonNull TaskListViewHolder holder, final int position) {
         holder.vhTask.setText(taskList.get(position).getTaskName()); //sets the name-text for each task in the list
+        holder.vhDesc.setText(taskList.get(position).displayDescription());
         int state = taskList.get(position).getTimerState();
-        if(state == 0) holder.vhTime.setText(""); // if there is no timer function, then there is no need to show a time that doesn't exist
+        if(state == 0) holder.vhTime.setText("No timer set!"); // if there is no timer function, then there is no need to show a time that doesn't exist
         else if(state == 1) { // grabs the due date, and formats it into text
             Calendar taskTime = taskList.get(position).getCalendar();
             int year = taskTime.get(taskTime.YEAR) ;
@@ -98,16 +96,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHo
 
         }
         holder.vhCheckBoxState.setImageResource(taskList.get(position).getCheckboxStateSource()); // checks if each task is checked or not, displays image accordingly.
-        holder.vhCheckbox.setOnClickListener(new View.OnClickListener() {
+        holder.vhTaskButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { // button handler for the checkboxes, checks or unchecks stuff.
                 taskList.get(position).setCheckBoxState();
                 notifyDataSetChanged();
             }
         });
-        holder.vhEditButton.setOnClickListener(new View.OnClickListener(){
+        holder.vhTaskButton.setOnLongClickListener(new View.OnLongClickListener(){
             @Override
-            public void onClick(View v){ // button appended to the names of each task, allowing for editing. The fun stuff
+            public boolean onLongClick(View v){ // button appended to the names of each task, allowing for editing. The fun stuff
                 String taskName = taskList.get(position).getTaskName(); //gets task name for package
                 String taskDescription = taskList.get(position).getTaskDescription(); // gets task description for package
                 int arraypos = position; // gets array position for package
@@ -123,6 +121,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHo
 
                 }
                 else openDialogFragment(taskName, taskDescription, arraypos); // sends off to a new function
+                return false;
             }
         });
     }
@@ -172,19 +171,26 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskListViewHo
     }
 
     public class TaskListViewHolder extends RecyclerView.ViewHolder{
-        TextView vhTask, vhTime; //vh is for view holder.
-        Button vhCheckbox;
+        TextView vhTask, vhTime, vhDesc; //vh is for view holder.
+        CardView vhTaskButton;
         Button vhEditButton;
         ImageView vhCheckBoxState;
         LinearLayout taskItem;
         TaskListViewHolder(View view){
             super(view);
-            vhTask = view.findViewById(R.id.taskName);
-            vhTime = view.findViewById(R.id.taskTime);
-            vhCheckbox = view.findViewById(R.id.checkButton);
-            vhCheckBoxState = view.findViewById(R.id.checkImage);
-            taskItem = view.findViewById(R.id.layout);
-            vhEditButton = view.findViewById(R.id.editTask);
+              vhTask = view.findViewById(R.id.taskNameCard);
+              vhTime = view.findViewById(R.id.taskTimerCard);
+              vhTaskButton = view.findViewById(R.id.taskCard);
+              vhDesc = view.findViewById(R.id.taskDescCard);
+              vhCheckBoxState = view.findViewById(R.id.taskStatusCard);
+//            taskItem = view.findViewById(R.id.layout);
+//            vhEditButton = view.findViewById(R.id.editTask);
+//            vhTask = view.findViewById(R.id.taskName);
+//            vhTime = view.findViewById(R.id.taskTime);
+//            vhCheckbox = view.findViewById(R.id.checkButton);
+//            vhCheckBoxState = view.findViewById(R.id.checkImage);
+//            taskItem = view.findViewById(R.id.layout);
+//            vhEditButton = view.findViewById(R.id.editTask);
         }
     }
 

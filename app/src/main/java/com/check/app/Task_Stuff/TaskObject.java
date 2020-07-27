@@ -151,17 +151,11 @@ public class TaskObject implements Serializable {
 
     public void updateCheckBoxSource() { // for when you swap between light or dark mode.
         if (checkboxState == 0) {
-            if (!(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)) {
-                checkboxStateSource = R.drawable.notchecked;
-            } else checkboxStateSource = R.drawable.dnotchecked;
+            checkboxStateSource = R.drawable.bnotchecked;
         } else if (checkboxState == 1) {
-            if (!(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)) {
-                checkboxStateSource = R.drawable.ischecked;
-            } else checkboxStateSource = R.drawable.dischecked;
+            checkboxStateSource = R.drawable.bischecked;
         } else if (checkboxState == 2) {
-            if (!(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)) {
-                checkboxStateSource = R.drawable.islate;
-            } else checkboxStateSource = R.drawable.dislate;
+            checkboxStateSource = R.drawable.bislate;
         }
     }
 
@@ -344,6 +338,17 @@ public class TaskObject implements Serializable {
 
     public interface notificationSender{
          void onNotificationReady(String taskName, Calendar taskCalendar, int taskID);
+    }
+
+    public String displayDescription(){
+        StringBuilder stringBuilder = new StringBuilder().append("Desc: ");
+        String desc = taskDescription;
+        if (desc.isEmpty()){
+            stringBuilder.append("None!");
+        }else{
+            stringBuilder.append(desc);
+        }
+        return stringBuilder.toString();
     }
 
 }

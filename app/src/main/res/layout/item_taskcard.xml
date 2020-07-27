@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:CardView="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    CardView:cardBackgroundColor="?attr/cardBackground"
+    CardView:cardCornerRadius="8dp"
+    CardView:cardElevation="12dp"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:id="@+id/taskCard"
+    CardView:cardUseCompatPadding="true"
+    android:baselineAligned="false"
+    CardView:cardPreventCornerOverlap="true">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/taskStatusCard">
+
+    </ImageView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="No name!"
+            android:textColor="?attr/textColor"
+            android:lines="1"
+            android:ellipsize="end"
+            android:id="@+id/taskNameCard">
+        </TextView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="No Timer set"
+            android:textColor="?attr/textColor"
+            android:lines="2"
+            android:ellipsize="end"
+            android:id="@+id/taskTimerCard"
+            android:layout_below="@+id/taskNameCard">
+        </TextView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="No Description."
+            android:textColor="?attr/textColor"
+            android:lines="2"
+            android:ellipsize="end"
+            android:id="@+id/taskDescCard"
+            android:layout_below="@+id/taskTimerCard">
+        </TextView>
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

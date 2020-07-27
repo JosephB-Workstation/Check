@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -277,13 +278,12 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
 
     private void taskListStarter(){
         taskList = new ArrayList<>();//init arraylist
-        lTasks = findViewById(R.id.taskList); //recycler view pairing
-        lTasks.setNestedScrollingEnabled(false); // removes scary scroll wheel
-        lTasks.setHasFixedSize(false); // allows for the better scroll wheel to work
-        lTaskLayoutManager = new LinearLayoutManager(getApplicationContext(), RecyclerView.VERTICAL, false); // layout manager that handles which way the recycler view appends items to a list
-        lTasks.setLayoutManager(lTaskLayoutManager);// configures layout manager for list page
-        lTaskAdapter = new TaskAdapter(taskList, this.getSupportFragmentManager()); // constructor for class: TaskAdapter, which handles checkboxes and edits.
-        lTasks.setAdapter(lTaskAdapter);//configures adapter to work here.
+        lTasks = findViewById(R.id.taskList);
+        lTaskLayoutManager = new GridLayoutManager(this, 2);
+        lTasks.setLayoutManager(lTaskLayoutManager);
+        lTaskAdapter = new TaskAdapter(taskList, this.getSupportFragmentManager());
+        lTasks.setAdapter(lTaskAdapter);
+
 
     }
 
@@ -360,15 +360,8 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         else if(colorId == 3) {
             if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {setBackground(R.drawable.dbackground_purple);}
             else {
-                //setBackground(R.drawable.background_purple);
-                try {
-                    URL url = new URL("https://images.unsplash.com/photo-1577971828613-9872f39c0825?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80");
-                    Bitmap bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                    Drawable image = new BitmapDrawable(getApplicationContext().getResources(), bitmap);
-                    background.setBackground(image);
-                } catch (IOException e) {
                     e.printStackTrace();
-                }
+                setBackground(R.drawable.background_purple);
             }}
 
         if(listInfo.containsKey("background")){listInfo.remove("background");}
@@ -388,15 +381,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         else if(colorId == 3) {
             if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {setBackground(R.drawable.dbackground_purple);}
             else {
-                //setBackground(R.drawable.background_purple);
-                try {
-                    URL url = new URL("https://images.unsplash.com/photo-1577971828613-9872f39c0825?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80");
-                    Bitmap bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                    Drawable image = new BitmapDrawable(getApplicationContext().getResources(), bitmap);
-                    background.setBackground(image);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                setBackground(R.drawable.background_purple);
             }}
         else if(colorId == -1){
             try {
