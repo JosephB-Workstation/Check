@@ -468,7 +468,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
                 listDb.setValue(listSettings);
             }
         }
-        
+
 
     protected void onResume() {
         super.onResume();
@@ -553,5 +553,23 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         void onStart();
         void onFailure();
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putDouble("colorID", backgroundColorId);
+        if(!mediaURI.isEmpty()){outState.putString("mediaURI", mediaURI);}
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if(savedInstanceState.containsKey("mediaURI")) {
+            mediaURI = savedInstanceState.getString("mediaURI");
+        }
+        backgroundColorId = savedInstanceState.getDouble("colorID");
+        attachColorSettings(backgroundColorId);
+    }
+
 }
 
