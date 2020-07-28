@@ -283,8 +283,6 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         lTasks.setLayoutManager(lTaskLayoutManager);
         lTaskAdapter = new TaskAdapter(taskList, this.getSupportFragmentManager());
         lTasks.setAdapter(lTaskAdapter);
-
-
     }
 
     @Override
@@ -360,7 +358,6 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
         else if(colorId == 3) {
             if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {setBackground(R.drawable.dbackground_purple);}
             else {
-                    e.printStackTrace();
                 setBackground(R.drawable.background_purple);
             }}
 
@@ -471,6 +468,7 @@ public class List_Activity extends AppCompatActivity implements Create_Task_Dial
                 listDb.setValue(listSettings);
             }
         }
+        
 
     protected void onResume() {
         super.onResume();
