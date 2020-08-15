@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.check.app">
+    package="com.josephb.check">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -11,16 +11,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"></activity>
-        <activity android:name=".List_Stuff.List_Activity" />
-        <activity android:name=".Login_Activity">
+        <activity android:name="com.josephb.check.MainActivity"></activity>
+        <activity android:name="com.josephb.check.List_Stuff.List_Activity" />
+        <activity android:name="com.josephb.check.Login_Activity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".ReminderBroadcast"/>
+        <receiver android:name="com.josephb.check.ReminderBroadcast"/>
     </application>
 
 </manifest>
